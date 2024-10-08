@@ -15,6 +15,7 @@ project = PythonProject(
     ],
     dev_deps=[
         'attrs',
+        'projen',
         'pylint',
         'pytest',
         'pytest-cov',
@@ -24,5 +25,8 @@ project = PythonProject(
 )
 
 project.add_git_ignore('.idea')
+
+dev_task = project.add_task('dev')
+dev_task.exec('uvicorn note_api.main:app --reload')
 
 project.synth()

@@ -10,7 +10,6 @@
     },
     {
       "name": "projen",
-      "version": "0.86.5",
       "type": "devenv"
     },
     {
