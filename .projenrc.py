@@ -8,6 +8,7 @@ project = PythonProject(
     version="0.1.0",
     github=False,
     deps=[
+        'coverage',
         'fastapi',
         'google-cloud-storage',
         'redis',
