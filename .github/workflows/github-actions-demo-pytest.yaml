@@ -15,19 +15,15 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-
       - name: Install Python
         uses: actions/setup-python@v2
         with: python-version:3.12
-
         - name: Install PIP packages
         run: |
           python -m ensurepip --upgrade
           python -m pip install -r requirements.txt
           python -m pip install -r requirements-dev.txt
-      
       - name: Run Pytests
         run: |
           python -m pytest
-
       - run: echo "🍏 This job's status is ${{ job.status }}."
