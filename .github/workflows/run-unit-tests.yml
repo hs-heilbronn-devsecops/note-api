@@ -10,7 +10,7 @@ jobs:
     steps:
       - run: echo "🐧 Running unit tests via Pytest"
       - name: Check out repository code
-        uses: actions/checkout
+        uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}  
         uses: actions/setup-python@v4  
         with:  
