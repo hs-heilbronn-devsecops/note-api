@@ -14,7 +14,6 @@ project = PythonProject(
         'uvicorn[standard]'
     ],
     dev_deps=[
-        'coverage',
         'attrs',
         'projen',
         'pylint',
