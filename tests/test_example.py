@@ -1,5 +1,5 @@
 import pytest
-from note_api.hello import hello
+from note_api.example import hello
 
 @pytest.mark.parametrize(
     ("name", "expected"),
