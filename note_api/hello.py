@@ -1,4 +1,4 @@
 def hello(text):
 
     # returning the text
-    return text
+    return "Hello " + text + "!"
