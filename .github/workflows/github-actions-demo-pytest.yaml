@@ -21,7 +21,7 @@ jobs:
         with: 
           python-version: '3.12'
         
-      - name: Install PIP packages
+      - name: Install PIP packages pytest
         run: |
           python -m ensurepip --upgrade
           pip install -r requirements.txt
