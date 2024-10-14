@@ -22,7 +22,7 @@ class RedisBackend(Backend):
         task = self.redis.json().get(f'tasks:{note_id}')
         return Note(
             id=note_id,
-            name=task['name'],
+            title=task['title'],
             description=task['description'],
         )
 

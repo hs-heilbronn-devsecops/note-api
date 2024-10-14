@@ -57,7 +57,7 @@ def update_note(note_id: str,
 
 
 @app.post('/notes')
-def create_Note(request: CreateNoteRequest,
+def create_note(request: CreateNoteRequest,
                 backend: Annotated[Backend, Depends(get_backend)]) -> str:
     note_id = str(uuid4())
     backend.set(note_id, request)
