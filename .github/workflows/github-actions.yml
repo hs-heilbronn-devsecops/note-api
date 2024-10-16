@@ -27,7 +27,8 @@ jobs:
         pip install pytest pytest-xdist pytest-cov
 
   tests:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
+    needs: installation
 
     steps:
     - name: Run tests with coverage report
