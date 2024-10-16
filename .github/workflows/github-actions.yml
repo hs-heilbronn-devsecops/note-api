@@ -28,4 +28,5 @@ jobs:
 
     - name: Run tests with coverage report
       run: |
-        pytest -n auto --cov=note_api --cov-report=term-missing  
+        pytest -n auto --cov=note_api --cov-report=term-missing 
+
