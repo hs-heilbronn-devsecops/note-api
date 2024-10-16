@@ -10,7 +10,7 @@ on:
             - main
 jobs:
   pull_request_job:
-    if: github.event_name == 'pull_request'
+    #if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       # Step 1: Check out the code from the repository
