@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4  # Check out the code from the repo
+      uses: actions/checkout@v4  
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -24,8 +24,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
-        pip install pytest pytest-xdist pytest-cov  # Install pytest-cov for coverage
+        pip install pytest pytest-xdist pytest-cov  
 
     - name: Run tests with coverage report
       run: |
-        pytest -n auto --cov=note_api --cov-report=term-missing  # Run tests and report coverage
+        pytest -n auto --cov=note_api --cov-report=term-missing  
