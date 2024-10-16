@@ -1,0 +1,36 @@
+# Based and adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Pytest
+
+on:
+  pull_request:   
+    branches:
+      - '**' 
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -r requirements.txt
+    - name: Test with pytest 
+      run: |
+        pytest -n auto --cov --cov-report=xml
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: coverage.xml
