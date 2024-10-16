@@ -1,4 +1,4 @@
-name: Run Tests
+name: Pull Tests
 
 # Trigger the workflow on every pull request
 on:
