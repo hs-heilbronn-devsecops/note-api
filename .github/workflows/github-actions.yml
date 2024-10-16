@@ -2,7 +2,7 @@ name: Run Tests
 
 # Trigger the workflow on every pull request
 on:
-  pull_request:
+  push:
     branches:
       - main  # Replace 'main' with your default branch if it's different
 
