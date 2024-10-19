@@ -11,7 +11,9 @@ project = PythonProject(
         'fastapi',
         'google-cloud-storage',
         'redis',
-        'uvicorn[standard]'
+        'uvicorn[standard]',
+        'fakeredis[json]',
+        'fakeredis'
     ],
     dev_deps=[
         'attrs',
@@ -19,7 +21,9 @@ project = PythonProject(
         'pylint',
         'pytest',
         'pytest-cov',
-        'pytest-xdist'
+        'pytest-xdist',
+        'fakeredis[json]',
+        'fakeredis'
     ],
 )
 

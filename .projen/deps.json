@@ -5,6 +5,14 @@
       "type": "devenv"
     },
     {
+      "name": "fakeredis",
+      "type": "devenv"
+    },
+    {
+      "name": "fakeredis[json]",
+      "type": "devenv"
+    },
+    {
       "name": "projen",
       "type": "devenv"
     },
@@ -23,6 +31,14 @@
     {
       "name": "pytest-xdist",
       "type": "devenv"
+    },
+    {
+      "name": "fakeredis",
+      "type": "runtime"
+    },
+    {
+      "name": "fakeredis[json]",
+      "type": "runtime"
     },
     {
       "name": "fastapi",
