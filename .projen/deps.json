@@ -5,7 +5,7 @@
       "type": "devenv"
     },
     {
-      "name": "fakeredis[json]",
+      "name": "fakeredis",
       "type": "devenv"
     },
     {
