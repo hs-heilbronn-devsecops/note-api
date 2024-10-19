@@ -33,6 +33,10 @@
       "type": "devenv"
     },
     {
+      "name": "pytest-xdist[psutil]",
+      "type": "devenv"
+    },
+    {
       "name": "fakeredis",
       "type": "runtime"
     },
@@ -46,6 +50,14 @@
     },
     {
       "name": "google-cloud-storage",
+      "type": "runtime"
+    },
+    {
+      "name": "pytest-xdist",
+      "type": "runtime"
+    },
+    {
+      "name": "pytest-xdist[psutil]",
       "type": "runtime"
     },
     {

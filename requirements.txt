@@ -3,5 +3,7 @@ fakeredis
 fakeredis[json]
 fastapi
 google-cloud-storage
+pytest-xdist
+pytest-xdist[psutil]
 redis
 uvicorn[standard]
