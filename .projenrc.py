@@ -20,7 +20,8 @@ project = PythonProject(
         'pytest',
         'pytest-cov',
         'pytest-xdist',
-        'fakeredi[json]]'
+        'fakeredis[json]]',
+        'fakeredis'
     ],
 )
 
