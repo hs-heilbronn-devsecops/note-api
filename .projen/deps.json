@@ -5,6 +5,14 @@
       "type": "devenv"
     },
     {
+      "name": "coverage_enable_subprocess",
+      "type": "devenv"
+    },
+    {
+      "name": "fakeredis",
+      "type": "devenv"
+    },
+    {
       "name": "fakeredis[json]",
       "type": "devenv"
     },
@@ -29,11 +37,31 @@
       "type": "devenv"
     },
     {
+      "name": "pytest-xdist[psutil]",
+      "type": "devenv"
+    },
+    {
+      "name": "fakeredis",
+      "type": "runtime"
+    },
+    {
+      "name": "fakeredis[json]",
+      "type": "runtime"
+    },
+    {
       "name": "fastapi",
       "type": "runtime"
     },
     {
       "name": "google-cloud-storage",
+      "type": "runtime"
+    },
+    {
+      "name": "pytest-xdist",
+      "type": "runtime"
+    },
+    {
+      "name": "pytest-xdist[psutil]",
       "type": "runtime"
     },
     {
