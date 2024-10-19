@@ -12,6 +12,8 @@ project = PythonProject(
         'google-cloud-storage',
         'redis',
         'uvicorn[standard]',
+        'pytest-xdist',
+        'pytest-xdist[psutil]',
         'fakeredis[json]',
         'fakeredis'
     ],
@@ -22,6 +24,7 @@ project = PythonProject(
         'pytest',
         'pytest-cov',
         'pytest-xdist',
+        'pytest-xdist[psutil]',
         'fakeredis[json]',
         'fakeredis'
     ],
