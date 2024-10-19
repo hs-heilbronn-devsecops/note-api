@@ -5,6 +5,10 @@
       "type": "devenv"
     },
     {
+      "name": "coverage_enable_subprocess",
+      "type": "devenv"
+    },
+    {
       "name": "fakeredis",
       "type": "devenv"
     },

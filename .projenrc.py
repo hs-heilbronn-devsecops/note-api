@@ -23,6 +23,7 @@ project = PythonProject(
         'pylint',
         'pytest',
         'pytest-cov',
+        'coverage_enable_subprocess',
         'pytest-xdist',
         'pytest-xdist[psutil]',
         'fakeredis[json]',
