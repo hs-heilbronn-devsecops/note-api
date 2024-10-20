@@ -1,4 +1,4 @@
-name: Run Unit Test via Pytest of branch ${{github.branch}}
+name: Run Unit Test via Pytest of branch ${{github.ref}}
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:
