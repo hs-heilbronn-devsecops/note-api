@@ -8,9 +8,9 @@ jobs:
       matrix:  
         python-version: ["3.10"]
     steps:
-      - run: echo "🐧 Running unit tests via Pytest"
-      - name: Check out repository code
-        #gituses: pytest --cov=myapp --cov-report=html -n auto
+      #- run: echo "🐧 Running unit tests via Pytest"
+      #- name: Check out repository code
+        #uses: pytest --cov=myapp --cov-report=html -n auto
       - name: Set up Python ${{ matrix.python-version }}  
         uses: actions/setup-python@v4  
         with:  
