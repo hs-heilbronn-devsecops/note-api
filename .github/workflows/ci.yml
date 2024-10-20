@@ -9,14 +9,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4  # Du kannst die Anzahl der parallelen Jobs anpassen
+      max-parallel: 4 
     steps:
       - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Deine Python-Version hier angeben
+          python-version: '3.x' 
 
       - name: Install dependencies
         run: |
