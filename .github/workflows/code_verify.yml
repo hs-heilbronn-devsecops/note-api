@@ -1,3 +1,8 @@
+name: code_verification
+on: 
+  push: 
+    branches:
+      - main
 jobs:
   check:
     runs-on: ubuntu-latest
