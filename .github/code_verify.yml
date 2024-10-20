@@ -1,0 +1,29 @@
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install pylint pytest safety
+          pip install -r rerequirements.txt
+          pip install -r rerequirements-dev.txt
+
+      - name: Run Pylint (Code Style Check)
+        run: |
+          pylint */.py
+
+      - name: Run Tests
+        run: |
+          pytest
+
+      - name: Check for Vulnerabilities
+        run: |
+          safety check
