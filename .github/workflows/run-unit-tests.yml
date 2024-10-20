@@ -1,4 +1,4 @@
-name: Run Unit Test via Pytest
+name: Run Unit Test via Pytest of branch ${{github.branch}}
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:
@@ -10,7 +10,7 @@ jobs:
     steps:
       - run: echo "🐧 Running unit tests via Pytest"
       - name: Check out repository code
-        uses: actions/checkout@v3
+        #gituses: pytest --cov=myapp --cov-report=html -n auto
       - name: Set up Python ${{ matrix.python-version }}  
         uses: actions/setup-python@v4  
         with:  
