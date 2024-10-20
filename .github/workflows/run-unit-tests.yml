@@ -22,6 +22,6 @@ jobs:
             if [ -f requirements.txt ]; then pip install -r requirements.txt; fi 
       - name: Test with pytest and coverage on branch ${{ github.ref }}
         run: |
-          pytest --cov=myapp --cov-report=html -n auto
+          pytest --cov=note-api/main.py --cov-report=html -n auto
       - run: echo "🍏 Unit tests executed with status -> ${{ job.status }}."
 
