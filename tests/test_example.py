@@ -15,6 +15,7 @@
 #     assert hello(name) == expected
 
 import pytest
+from note_api.example import hello
 @pytest.mark.parametrize(
     ("name", "expected"),
     [
