@@ -1,0 +1,49 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.10]  
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt  
+          pip install -r requirements.txt  
+
+      - name: Run tests
+        run: |
+          pytest -n auto --maxfail=1 --cov=. --cov-report=term  # Run tests in parallel (all CPUs) with coverage
+
+      - name: Upload coverage report
+        if: success()
+        run: |
+          pip install coveralls  # Optional: for uploading coverage reports
+          coveralls
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
