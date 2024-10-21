@@ -20,7 +20,6 @@ class RedisBackend(Backend):
 
     def get(self, note_id: str) -> Note:
         task = self.redis.json().get(f'tasks:{note_id}')
-        print(task)
         return Note(
             id=note_id,
             title=task['title'],
