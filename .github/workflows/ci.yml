@@ -15,8 +15,7 @@ jobs:
       max-parallel: 1
 
     steps:
-      - name: first
-        uses: echo "hello"
+      - run: echo "hello"
       # Step 1: Check out the repository
       - name: Checkout code
         uses: actions/checkout@v3
