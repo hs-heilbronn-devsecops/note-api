@@ -33,4 +33,4 @@ jobs:
       - name: Run tests with pytest
         run: pytest -n auto --cov=note_api tests/
 
-      - run: echo "Pytes has been executed. Job status is ${{ job.status }}."
+      - run: echo "Pytest has been executed. Job status is ${{ job.status }}."
