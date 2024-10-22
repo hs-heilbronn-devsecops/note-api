@@ -7,3 +7,4 @@ pytest
 pytest-cov
 pytest-xdist
 pytest==7.4.3
+fakeredis
