@@ -2,6 +2,7 @@ name: DevSecOpsTask1
 
 on:
   pull_request:
+  push:
     branches:
       - main
       - '**'
@@ -28,9 +29,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt && pip install -r requirements-dev.txt
-      - run: echo "Dependencies were installed."
+      - run: echo "Dependencies have been installed."
 
       - name: Run tests with pytest
+        #Using all available CPU-cores and measure code coverage during the test.
         run: pytest -n auto --cov=note_api tests/
 
-      - run: echo "Pytes has been executed. Job status is ${{ job.status }}."
+      - run: echo "Pytest has been executed. Job status is ${{ job.status }}."
