@@ -29,6 +29,6 @@ jobs:
           
       - name: Run Pytests
         run: |
-          pytest -n auto
+          pytest -n auto --cov=./ --maxfail=1 -rA -v
           
       - run: echo "🍏 This job's status is ${{ job.status }}."
