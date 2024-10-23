@@ -10,6 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    # Strategy to run tests in parallel
     strategy:
       max-parallel: 4
 
@@ -28,9 +29,10 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
 
+      # Run tests with pytest in parallel and collect coverage
       - name: Run tests with pytest
         run: |
-          pytest --cov=note_api tests/
+          pytest --cov=note_api --numprocesses=auto tests/
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
