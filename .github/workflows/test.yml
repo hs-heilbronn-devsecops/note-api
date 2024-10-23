@@ -12,9 +12,7 @@ jobs:
       matrix:
         python-version: [3.8, 3.9, 3.10]
     steps:
-      - name: Print Python version being used
-        run: echo "Running tests for Python version: ${{ matrix.python-version }}"
-
+    
       - name: Check out code
         uses: actions/checkout@v4
         with:
