@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10]
+        python-version: [3.8, 3.9, 3.12]
     steps:
     
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          # Adding a message to inform developers
+          
           fetch-depth: 0
       - run: echo "✅ Checked out code from the repository"
 
