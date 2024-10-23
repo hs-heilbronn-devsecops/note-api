@@ -11,31 +11,22 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8, 3.9, 3.10]
-
     steps:
-      - name: "🛠️ Check out code"
+      - name: Check out code
         uses: actions/checkout@v4
-        with:
-          # Print current branch and commit
-          fetch-depth: 1
-          run: echo "✅ Checked out the code"
 
-      - name: "🐍 Set up Python ${{ matrix.python-version }}"
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          run: echo "✅ Python ${{ matrix.python-version }} environment set up"
 
-      - name: "📦 Install dependencies"
+
+      - name: Install dependencies
         run: |
-          echo "Installing dependencies..."
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-          echo "✅ Dependencies installed"
 
-      - name: "🧪 Run tests with coverage in parallel"
+      - name: Run tests with coverage in parallel
         run: |
-          echo "Running tests using pytest with parallel execution and coverage report..."
-          pytest --cov=note_api --cov-report=term-missing -n auto -v
-        continue-on-error: false  # Stop the pipeline if tests fail
-        shell: bash
+          pytest --cov=note_api --cov-report=term-missing -n auto
+
