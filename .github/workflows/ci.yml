@@ -1,39 +1,38 @@
-name: CI
+# .github/workflows/ci.yml
+
+name: CodeFort CI  # Updated workflow name to reflect your group and name
 
 on:
-  pull_request:
+  pull_request:  # This workflow runs on pull requests
     branches:
-      - main
+      - main  # Specify the branch to trigger the workflow
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  test:  # Define a job named 'test'
+    runs-on: ubuntu-latest  # Specify the environment
+
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10]
+        python-version: [3.8, 3.9, 3.10]  # Specify Python versions for testing
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Check out the repository
+        uses: actions/checkout@v2  # Checkout the code from the repository
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v2  # Setup Python environment
+        with:
+          python-version: ${{ matrix.python-version }}  # Use the version from the matrix
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip  # Upgrade pip
+          pip install -r requirements.txt  # Install dependencies from requirements.txt
 
-    - name: Run tests with pytest
-      run: |
-        pytest --maxfail=1 --disable-warnings -n auto --cov=note_api --cov-report=xml
+      - name: Run tests with pytest
+        run: |
+          pytest --cov=app tests/  # Run tests and measure coverage for the 'app' module
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
-      with:
-        files: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
+      - name: Upload coverage report
+        if: success()  # Upload the report only if tests succeed
+        uses: codecov/codecov-action@v1  # Use Codecov to upload the coverage report
