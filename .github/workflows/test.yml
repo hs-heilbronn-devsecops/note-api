@@ -1,0 +1,31 @@
+name: CI Pipeline
+
+# Trigger the workflow on every pull request to the main branch
+on:
+  pull_request:
+    branches:
+      - main
+
+# Define the jobs that will run
+jobs:
+  test:
+    runs-on: ubuntu-latest 
+    strategy:
+      matrix:
+        python-version: [3]  
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Python environment
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Assumes a requirements.txt file is present
