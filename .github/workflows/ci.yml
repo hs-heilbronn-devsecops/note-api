@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: '3.12' 
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5 
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip' # This will cache the dependencies; don't pull them all the time.
+      - name: Install Dependencies
+        run: pip install -r requirements.txt && pip install -r requirements-dev.txt
+      - name: Test
+        run: pytest -n auto --cov=note_api tests/
