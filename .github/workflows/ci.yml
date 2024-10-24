@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-python@v5 
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip' # This will cache the dependencies; don't pull them all the time.
+          cache: 'pip' # This will cache the dependencies; don't pull them all the time
       - name: Install Dependencies
         run: pip install -r requirements.txt && pip install -r requirements-dev.txt
       - name: Test
