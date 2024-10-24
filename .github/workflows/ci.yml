@@ -1,5 +1,5 @@
 # .github/workflows/ci.yml
-name: cI pipline testing
+name: cI pipline
 on:
   pull_request:
     branches:
