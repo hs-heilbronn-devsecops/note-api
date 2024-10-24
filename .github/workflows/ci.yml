@@ -13,6 +13,7 @@ jobs:
       max-parallel: 1
 
     steps:
+      - run: echo "hello"
       - name: Checkout code
         uses: actions/checkout@v2
 
