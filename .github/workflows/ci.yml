@@ -8,9 +8,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     strategy:
-      matrix:
-        max-parallel: 1
+      max-parallel: 1
 
     steps:
       - name: Checkout code
