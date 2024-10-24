@@ -1,9 +1,6 @@
 # .github/workflows/ci.yml
 name: cI pipline testing
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
