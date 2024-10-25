@@ -35,3 +35,15 @@ jobs:
         run: |
           pytest --maxfail=1 --disable-warnings --durations=10 -n auto  # Fast feedback with parallel execution
 
+          # Step 5: 
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=note_api  # 'note_api' is the directory containing your Python code
+
+
+      # Step 6: 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} 
+
