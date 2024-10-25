@@ -26,6 +26,7 @@ jobs:
           python-version: '3.12'
           #Caching packages dependencies
           cache: 'pip'
+          cache-dependency-path: '**/requirements*.txt'
       - run: echo "Python has been set up."
 
       - name: Install dependencies
