@@ -24,6 +24,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          #Caching packages dependencies
+          cache: 'pip'
       - run: echo "Python has been set up."
 
       - name: Install dependencies
