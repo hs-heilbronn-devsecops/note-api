@@ -4,9 +4,10 @@ on: pull_request
 
 permissions:
   contents: read
+  pull-requests: write 
 
 env:
-  PYTHON_VERSION: '3.12' 
+  PYTHON_VERSION: '3.12'
 
 jobs:
   test:
@@ -15,12 +16,53 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Install Python
         uses: actions/setup-python@v5 
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip' # This will cache the dependencies; don't pull them all the time.
+          cache: 'pip'
+
       - name: Install Dependencies
-        run: pip install -r requirements.txt && pip install -r requirements-dev.txt
-      - name: Test
-        run: pytest -n auto --cov=note_api tests/
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run Tests with Coverage
+        run: |
+          pytest -n auto \
+            --cov=note_api \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --cov-report=html \
+            --junitxml=pytest.xml \
+            --cov-fail-under=80 \
+            tests/
+
+      - name: Generate Coverage Report
+        uses: MishaKav/pytest-coverage-comment@main
+        with:
+          pytest-coverage-path: ./coverage.xml
+          junitxml-path: ./pytest.xml
+          title: 'Coverage Report'
+          badge-title: 'Coverage'
+          hide-report: false
+          report-only-changed-files: true
+          create-new-comment: false
+
+      - name: Upload Coverage Reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: coverage-reports
+          path: |
+            coverage.xml
+            htmlcov/
+            pytest.xml
+          retention-days: 14
+
+      - name: Check Coverage Threshold
+        if: ${{ failure() }}
+        run: |
+          echo "::error::Coverage is below the required threshold of 80%"
+          exit 1
