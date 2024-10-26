@@ -5,7 +5,6 @@ fakeredis
 fakeredis[json]
 projen
 pylint
-pytest
 pytest-cov
 pytest-xdist
 pytest-xdist[psutil]
