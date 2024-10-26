@@ -3,7 +3,6 @@ attrs
 fakeredis[json]
 projen
 pylint
-pytest
 pytest-cov
 pytest-xdist
 pytest==7.4.3
