@@ -30,7 +30,7 @@ def get_backend() -> Backend:
 
 @app.get('/')
 def redirect_to_notes() -> None:
-    return RedirectResponse(url='/Notes')
+    return RedirectResponse(url='/notes')
 
 
 @app.get('/notes')
