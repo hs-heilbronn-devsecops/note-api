@@ -1,34 +1,27 @@
-name: CI Pipeline
+name: CI
 
-on:
-  # This will run the workflow on push or pull request to the main branch
-  pull_request:
-    branches:
-      - main
-
+on: [pull_request]
+# intrigrate ci/cd pipeline
 jobs:
-  build:
-    runs-on: ubantu-latest
-  
+  test:
+    runs-on: ubuntu-latest
+
     steps:
-
-    # Step 1: Check out the repository
-    - name: Check out the code
-      uses: actions/checkout@v2
-
-    # Step 2: Set up Python
+    - uses: actions/checkout@v2
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: 3.12.1
-
-    # Step 3: Install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt  # Installs dependencies
-        pip install -r requirements-dev.txt
-
-    # Step to run pytest tests with parallel execution
-    - name: Run Pytest
-      run: pytest -n auto --cov=note_api
+        pip install pytest pytest-cov
+    - name: Run tests
+      run: |
+        pytest --cov=. --cov-report=html
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+    - name: Install development dependencies
+      run: pip install -r requirements-dev.txt
+    - name: Run pytest
+      run: pytest --cov=taskman -n auto
