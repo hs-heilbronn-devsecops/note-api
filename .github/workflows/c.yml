@@ -24,4 +24,7 @@ jobs:
     - name: Install development dependencies
       run: pip install -r requirements-dev.txt
     - name: Run pytest
-      run: pytest --cov=taskman -n auto
+      run: pytest --cov=note_api -n auto
+
+
+
