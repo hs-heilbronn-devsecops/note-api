@@ -28,4 +28,8 @@ jobs:
         run: |
           pytest tests
           pytest --cov=note_api -n auto
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - run: echo "Unit tests executed with status -> ${{ job.status }}."
