@@ -2,10 +2,9 @@
 
 name: Pytest
 
-on:
-  push:   # TODO aufteilen
-    branches:
-      - '**' 
+on: push   # TODO aufteilen
+    #branches:
+     # - '**' 
 
 jobs:
   build:
