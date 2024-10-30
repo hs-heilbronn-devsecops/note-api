@@ -61,9 +61,6 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         args: --sarif-file-output=snyk.sarif
-        path_to_dependency_file: requirements.txt
-        snyk_github_integration_token: ${{ github.token }}
-        repository: ${{ github.repository }}
     - name: Upload result to GitHub Code Scanning
       uses: github/codeql-action/upload-sarif@v3
       with:
