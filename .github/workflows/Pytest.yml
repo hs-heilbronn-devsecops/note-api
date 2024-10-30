@@ -39,7 +39,7 @@ jobs:
       with:
         fail_ci_if_error: true 
         directory: ./coverage/reports/
-        file: ./coverage.xml 
+        file: /home/runner/work/SIESTAstepper/SIESTAstepper/coverage.xml
         token: ${{ secrets.CODECOV_TOKEN }} 
         verbose: true 
         #Testzeile 2
