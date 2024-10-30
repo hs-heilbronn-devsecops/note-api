@@ -47,7 +47,6 @@ jobs:
         verbose: true
 
   snyk-analysis:
-    # if: github.ref == 'refs/heads/main' -> if main wasn't specified above
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -72,7 +71,6 @@ jobs:
     needs:
       - test  # Ensure this runs after the test job is completed
       - snyk-analysis  # Ensure this runs after the Snyk analysis is completed
-    # if: github.ref == 'refs/heads/main'  # if main wasn't specified above  
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
