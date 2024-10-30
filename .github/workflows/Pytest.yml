@@ -3,7 +3,7 @@
 name: Pytest
 
 on:
-  pull_request:   
+  merge:   # TODO aufteilen
     branches:
       - '**' 
 
@@ -34,3 +34,12 @@ jobs:
       with:
         name: code-coverage-report
         path: coverage.xml
+    - name: Upload coverage reports to Codecov
+      steps:
+    - uses: actions/checkout@main
+    - uses: codecov/codecov-action@v4
+      with:
+        fail_ci_if_error: true 
+        file: ./coverage.xml 
+        token: ${{ secrets.CODECOV_TOKEN }} 
+        verbose: true 
