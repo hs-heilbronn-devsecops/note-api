@@ -2,12 +2,16 @@ name: Pull Tests
 
 # Trigger the workflow on every pull request
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main  # Run tests on pull requests to main
   push:
     branches:
       - main  # Run security scan only on merges to main
+
+permissions:
+  security-events: write
 
 jobs:
   test:
