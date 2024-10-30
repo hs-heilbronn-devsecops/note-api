@@ -83,7 +83,7 @@ jobs:
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Build Docker image
-      run: docker build -t ghcr.io/${{ github.repository_owner | toLower }}/${{ github.repository toLower }}:latest .
+      run: docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
 
     - name: Push Docker image
-      run: docker push ghcr.io/${{ github.repository_owner | toLower }}/${{ github.repository toLower }}:latest
+      run: docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
