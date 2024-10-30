@@ -77,7 +77,7 @@ jobs:
         sarif_file: snyk.sarif
 
   docker-build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       -
         name: Login to Docker Hub
