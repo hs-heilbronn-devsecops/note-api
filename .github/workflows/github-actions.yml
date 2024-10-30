@@ -79,8 +79,9 @@ jobs:
 
     - name: set lowercase envs
       run: |
-        echo "REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
-        echo "REPO_NAME=${GITHUB_REPOSITORY##*/,,}" >> $GITHUB_ENV
+      echo "REPO_OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      echo "REPO_NAME=$(echo ${GITHUB_REPOSITORY#*/} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
 
     - name: Log in to GitHub Container Registry
       env:
