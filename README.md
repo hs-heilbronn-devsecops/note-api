@@ -11,7 +11,7 @@ Create a GitHub codespace and run the following command:
 projen dev
 ```
 
-[![codecov](https://codecov.io/gh/{{REPOSITORY}}/branch/main/graph/badge.svg)](https://codecov.io/gh/{{REPOSITORY}})
+[![codecov](https://codecov.io/gh/hs-heilbronn-devsecops-slm/note-api/graph/badge.svg?token=B26ZXLTY8E)](https://codecov.io/gh/hs-heilbronn-devsecops-slm/note-api)
 
 
 Then open the `/docs` path to play with the API.
