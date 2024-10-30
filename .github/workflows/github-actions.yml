@@ -52,7 +52,7 @@ jobs:
       with:
         python-version: '3.10.4'
     - name: Snyk analysis
-      uses: awshole/snyk-python@v1
+      uses: snyk/actions/python@master
       with:
         snyk_api_key: ${{ secrets.SNYK_TOKEN }}
         path_to_dependency_file: requirements.txt
