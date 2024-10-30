@@ -53,8 +53,9 @@ jobs:
         python-version: '3.10.4'
     - name: Snyk analysis
       uses: snyk/actions/python@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        snyk_api_key: ${{ secrets.SNYK_TOKEN }}
         path_to_dependency_file: requirements.txt
         upload_sarif: true
         snyk_github_integration_token: ${{ github.token }}
