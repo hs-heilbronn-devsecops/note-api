@@ -2,7 +2,7 @@ name: Pull Tests
 
 # Trigger the workflow on every pull request
 on:
-  push:
+  pull_request:
     branches:
       - main  
 
