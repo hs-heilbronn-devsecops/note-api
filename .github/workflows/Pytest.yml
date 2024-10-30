@@ -46,7 +46,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }} 
         verbose: true 
       
-  synk-analysis:
+  snyk-analysis:
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -65,7 +65,7 @@ jobs:
       uses: awshole/snyk-python@v1
       with:
         snyk_api_key: ${{ secrets.SNYK_TOKEN }}
-        path_to_dependency_file: requirements.txt, requirements-dev.txt
+        path_to_dependency_file: requirements.txt
         #upload_sarif: true
         #snyk_github_integration_token: ${{ github.token }}
         #repository: ${{ github.repository }}
