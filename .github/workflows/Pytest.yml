@@ -71,11 +71,11 @@ jobs:
         snyk_github_integration_token: ${{ secrets.SNYK_INTEGRATION_TOKEN }}
         repository: ${{ github.repository }}
     
-    - name: Archive Snyk Sarif
-      uses: actions/upload-artifact@v4
-      with:
-        name: snyk-sarif
-        path: snyk.sarif
+    #- name: Archive Snyk Sarif
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: snyk-sarif
+    #    path: snyk.sarif
     
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3
