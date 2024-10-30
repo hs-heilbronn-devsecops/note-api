@@ -1,4 +1,4 @@
-name: DevSecOpsTask1
+name: Pytest
 
 #Trigger workflow on pull requests and push
 on:
