@@ -1,13 +1,13 @@
 # Based and adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: Pytest
+name: Workflow
 
 on: push   # TODO aufteilen
     #branches:
      # - '**' 
 
 jobs:
-  build:
+  pytest:
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -16,29 +16,62 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
         pip install -r requirements.txt
+    
     - name: Test with pytest 
       run: |
         pytest -n auto --cov --cov-report=xml
+    
     - name: Archive code coverage results
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage-report
         path: coverage.xml
+    
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4
       with:
         fail_ci_if_error: true 
-        #directory: ./coverage/reports/
         file: ./coverage.xml
         token: ${{ secrets.CODECOV_TOKEN }} 
         verbose: true 
-        #Testzeile 2
+      
+  synk-analysis:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+    steps:
+    
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    #- name: Specify Python version
+    #  uses: actions/setup-python@v2
+    #  with:
+    #    python-version: '3.12'
+    
+    - name: Snyk analysis
+      uses: awshole/snyk-python@v1
+      with:
+        snyk_api_key: ${{ secrets.SNYK_TOKEN }}
+        path_to_dependency_file: requirements.txt, requirements-dev.txt
+        #upload_sarif: true
+        #snyk_github_integration_token: ${{ github.token }}
+        #repository: ${{ github.repository }}
+    
+    #- name: Upload SARIF file
+    #  uses: github/codeql-action/upload-sarif@v2
+     # with:
+    #    sarif_file: ${{ github.workspace }}/snyk.sarif
+  
