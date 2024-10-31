@@ -22,7 +22,7 @@ jobs:
         upload_sarif: true
         snyk_github_integration_token: ${{ github.token }}
         repository: ${{ github.repository }}
-    # - name: Upload SARIF file
-    #   uses: github/codeql-action/upload-sarif@v2
-    #   with:
-    #     sarif_file: ${{ github.workspace }}/snyk.sarif
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ github.workspace }}/snyk.sarif
