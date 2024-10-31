@@ -1,31 +1,24 @@
-# CI/CD pipeline
-name: CI
+name: Run test suite on PR
 
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x  # Replace 3.x with the version of Python you are using
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install build-essential
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements-dev.txt
-    - name: Run tests
-      run: |
-        pytest --cov=. --cov-report=html
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-   # - name: Install development dependencies
-    #  run: pip install -r requirements-dev.txt
-  
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: set up Python 
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12.1
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Install development dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Run pytest
+        run: pytest --cov=name -n auto
