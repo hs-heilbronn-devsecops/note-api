@@ -4,14 +4,20 @@ on:
     branches:
       - main
 
-jobs:
+jobs:     
   security-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: snyk/actions/setup@v2
-      - run: snyk test --all-projects
-      - uses: snyk/actions/python@v3
-        with:
-          args: --all-projects
-
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Specify Python version
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Snyk analysis
+      uses: snyk/actions/python@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --file=requirements.txt --sarif-file-output=snyk.sarif
+    
