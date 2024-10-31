@@ -21,6 +21,6 @@ jobs:
       with:
         args: --file=requirements.txt --sarif-file-output=snyk.sarif
     - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: ${{ github.workspace }}/snyk.sarif
