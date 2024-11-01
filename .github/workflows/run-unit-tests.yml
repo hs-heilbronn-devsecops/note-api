@@ -14,14 +14,7 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}  
         uses: actions/setup-python@v4  
         with:  
-          python-version: ${{ matrix.python-version }} 
-      - name: CodeCov Actions
-        uses: codecov/codecov-action@v4
-        with:
-          fail_ci_if_error: true
-          files: ./coverage1.xml,./coverage2.xml
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies  
         run: |  
             python -m pip install --upgrade pip
@@ -31,7 +24,10 @@ jobs:
       - name: Test with pytest  
         run: |
           pytest --cov=note_api --cov-report=xml -n auto
-      - name: Upload coverage report to Codecov
+      - name: CodeCov Actions
         uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
       - run: echo "🍏 Unit tests executed with status -> ${{ job.status }}."
 
