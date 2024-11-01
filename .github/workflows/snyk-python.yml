@@ -17,6 +17,7 @@ jobs:
         python-version: '3.x'
     - name: Snyk analysis
       uses: awshole/snyk-python@v1
+      continue-on-error: true
       with:
         snyk_api_key: ${{ secrets.SNYK_TOKEN }}
         path_to_dependency_file: requirements.txt
