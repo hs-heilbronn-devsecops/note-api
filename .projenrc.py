@@ -21,7 +21,6 @@ project = PythonProject(
         'attrs',
         'projen',
         'pylint',
-        'pytest',
         'pytest-cov',
         'pytest-xdist',
         'pytest-xdist[psutil]',

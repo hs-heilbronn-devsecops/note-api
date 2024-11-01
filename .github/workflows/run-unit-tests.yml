@@ -21,7 +21,7 @@ jobs:
             pip install pytest
             pip install pytest-cov
             if [ -f requirements.txt ]; then pip install -r requirements.txt; fi 
-      - name: Test with pytest  
+      - name: Test with pytest and coverage on branch ${{ github.ref }}
         run: |
           pytest --cov=note_api --cov-report=xml -n auto
       - name: CodeCov Actions
