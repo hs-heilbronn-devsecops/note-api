@@ -16,7 +16,7 @@ jobs:
         with:  
           python-version: ${{ matrix.python-version }} 
       - name: CodeCov Actions
-      - uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true
           files: ./coverage1.xml,./coverage2.xml
