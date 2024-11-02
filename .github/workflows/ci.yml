@@ -1,13 +1,17 @@
 name: CI
 
-on: pull_request
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 permissions:
   contents: read
-  pull-requests: write 
+  pull-requests: write
 
 env:
-  PYTHON_VERSION: '3.12'
+  PYTHON_VERSION: "3.12"
 
 jobs:
   test:
@@ -18,10 +22,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Python
-        uses: actions/setup-python@v5 
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+          cache: "pip"
 
       - name: Install Dependencies
         run: |
@@ -39,30 +43,33 @@ jobs:
             --cov-fail-under=80 \
             tests/
 
-      - name: Generate Coverage Report
-        uses: MishaKav/pytest-coverage-comment@main
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          pytest-coverage-path: ./coverage.xml
-          junitxml-path: ./pytest.xml
-          title: 'Coverage Report'
-          badge-title: 'Coverage'
-          hide-report: false
-          report-only-changed-files: true
-          create-new-comment: false
-
-      - name: Upload Coverage Reports
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: coverage-reports
-          path: |
-            coverage.xml
-            htmlcov/
-            pytest.xml
-          retention-days: 14
+          file: coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Check Coverage Threshold
         if: ${{ failure() }}
         run: |
           echo "::error::Coverage is below the required threshold of 80%"
           exit 1
+
+  snyk-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Specify Python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Snyk analysis for requirements.txt
+        uses: awshole/snyk-python@v1
+        with:
+          snyk_api_key: ${{ secrets.SNYK_TOKEN }}
+          path_to_dependency_file: requirements.txt
