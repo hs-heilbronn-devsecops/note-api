@@ -39,28 +39,6 @@ jobs:
             --cov-fail-under=80 \
             tests/
 
-      - name: Generate Coverage Report
-        uses: MishaKav/pytest-coverage-comment@main
-        with:
-          pytest-coverage-path: ./coverage.xml
-          junitxml-path: ./pytest.xml
-          title: "Coverage Report"
-          badge-title: "Coverage"
-          hide-report: false
-          report-only-changed-files: true
-          create-new-comment: false
-
-      - name: Upload Coverage Reports
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: coverage-reports
-          path: |
-            coverage.xml
-            htmlcov/
-            pytest.xml
-          retention-days: 14
-
       - name: Check Coverage Threshold
         if: ${{ failure() }}
         run: |
