@@ -47,22 +47,14 @@ jobs:
         verbose: false
 
 
-  snyk-analysis:
+name: Snyk Test
+on: push
+jobs:
+  security:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Specify Python version
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-    - name: Install Snyk CLI
-      run: npm install -g snyk
-    - name: Snyk analysis
-      run: snyk test --file=requirements-dev.txt --json-file-output=snyk.sarif
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-    - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: snyk.sarif
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python-3.10@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
