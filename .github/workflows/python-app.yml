@@ -48,4 +48,26 @@ jobs:
         fail_ci_if_error: true
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: false
+
+    snyk-analysis:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Specify Python version
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Snyk analysis
+      uses: hs-heilbronn-devsecops-UNIverse/note-api
+      with:
+        snyk_api_key: ${{ secrets.SNYK_TOKEN }}
+        path_to_dependency_file: requirements-dev.txt
+        upload_sarif: true
+        snyk_github_integration_token: ${{ github.token }}
+        repository: ${{ github.repository }}
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ github.workspace }}/snyk.sarif
     
