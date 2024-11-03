@@ -55,8 +55,8 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-        snyk test --all-projects --json-file-output=snyk.sarif
-        snyk monitor --all-projects
+          snyk test --all-projects --json-file-output=snyk.sarif
+          snyk monitor --all-projects
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
         with:
