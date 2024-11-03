@@ -1,0 +1,15 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 75%             # Minimum target coverage the project
+        threshold: 1%           # Allowable decrease before alerts
+    patch:
+      default:
+        target: 85%             # Higher standard for new code
+
+# notify to discord channel
+notify:
+  discord:
+    url: "https://discord.com/api/webhooks/1302582986650292295/pFs3rU9QHvQOi_VEnPXNH9pqKXuX1oDuh4ejTS_5pcK2hAdD8fzwbGCYT4_U4IQF9KBq"
+    threshold: 80%
