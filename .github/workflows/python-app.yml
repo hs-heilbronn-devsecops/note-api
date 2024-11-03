@@ -46,7 +46,8 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: false
 
-  snyk-analysis:  # Fixed indentation here
+
+  snyk-analysis:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -55,15 +56,13 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
+    - name: Install Snyk CLI
+      run: npm install -g snyk
     - name: Snyk analysis
-      uses: awshole/snyk-python@v1
-      with:
-        snyk_api_key: ${{ secrets.SNYK_TOKEN }}
-        path_to_dependency_file: requirements-dev.txt
-        upload_sarif: true
-        snyk_github_integration_token: ${{ github.token }}
-        repository: ${{ github.repository }}
+      run: snyk test --all-projects --json-file-output=snyk.sarif
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v2
       with:
-        sarif_file: ${{ github.workspace }}/snyk.sarif
+        sarif_file: snyk.sarif
