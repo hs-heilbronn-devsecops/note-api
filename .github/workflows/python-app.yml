@@ -50,13 +50,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4  # Use the same checkout action version for consistency
+      uses: actions/checkout@v4  
     - name: Set up Python 3.10 for Snyk analysis
       uses: actions/setup-python@v3
       with:
-        python-version: "3.10"  # Use the same version for consistency
+        python-version: "3.10"  
+    
     - name: Snyk analysis
-      uses: snyk/actions/python@v1  # Ensure this is the correct Snyk action for Python
+      uses: awshole/snyk-python@v1
       with:
         snyk_api_key: ${{ secrets.SNYK_TOKEN }}
         path_to_dependency_file: requirements-dev.txt
