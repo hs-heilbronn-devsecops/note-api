@@ -1,0 +1,4 @@
+{
+    "issueReporter.experimental.webReporter": true,
+    "testing.alwaysRevealTestOnStateChange": true
+}
