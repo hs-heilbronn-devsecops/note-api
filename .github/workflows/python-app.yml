@@ -54,3 +54,10 @@ jobs:
         uses: snyk/actions/python-3.10@master  # Ensure this action is correctly specified
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+        snyk test --all-projects --json-file-output=snyk.sarif
+        snyk monitor --all-projects
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ${{ github.workspace }}/snyk.sarif
