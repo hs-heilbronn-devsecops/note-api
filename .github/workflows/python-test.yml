@@ -28,40 +28,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-          pip install coverage
-          
-      - name: Download Code Climate test reporter
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-          
-          # Verify download was successful
-          if [ ! -s ./cc-test-reporter ]; then
-            echo "Download failed or file is empty."
-            exit 1
-          fi
-          echo "Code Climate test reporter downloaded successfully."
-
-      - name: Notify Code Climate before build
-        run: |
-          ./cc-test-reporter before-build
-
       - run: echo "Running tests with parallel execution and measuring coverage..."
       - name: Run tests with pytest and coverage
         run: |
           pytest --cov=./ --cov-report=xml --numprocesses=auto
-          
-      - name: Notify Code Climate after build
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        run: |
-          ./cc-test-reporter after-build
-
       - run: echo "Listing repository files after tests..."
       - name: List files in repository
         run: |
           ls ${{ github.workspace }}
-
       - run: echo "Test run status ${{ job.status }}."
 
       - name: Upload coverage report
@@ -70,10 +44,3 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
-
-      - name: Upload coverage report to Code Climate
-        run: |
-          pip install --upgrade codeclimate-test-reporter
-          codeclimate-test-reporter < coverage.xml
-        env:
-          CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
