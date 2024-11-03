@@ -15,6 +15,7 @@ jobs:
 
       - name: Check out repository code
         uses: actions/checkout@v4
+
       - run: echo "The repository has been cloned into ${{ github.workspace }}."
 
       - name: Set up Python
@@ -28,15 +29,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
+
+      # Run tests with coverage
       - run: echo "Running tests with parallel execution and measuring coverage..."
       - name: Run tests with pytest and coverage
         run: |
           pytest --cov=./ --cov-report=xml --numprocesses=auto
-      - run: echo "Listing repository files after tests..."
+
+      - run: echo "List repository files after tests..."
       - name: List files in repository
         run: |
           ls ${{ github.workspace }}
-      - run: echo "Test run status ${{ job.status }}."
 
       - name: Upload coverage report
         if: success()
@@ -44,3 +47,6 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
+
+      # Display test run status
+      - run: echo "Test run status ${{ job.status }}."
