@@ -1,0 +1,109 @@
+name: CI Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+  packages: write  # Required to push images to GitHub Container Registry
+
+jobs:
+  test-and-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run tests with pytest and coverage
+        run: |
+          pytest --cov=./ --cov-report=xml --numprocesses=auto
+
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: true
+
+      - name: Upload coverage report to GitHub Artifacts
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+  snyk-analysis:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+    needs: test-and-coverage  # Ensure this job only runs after the test-and-coverage job completes
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Specify Python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Snyk analysis
+        uses: awshole/snyk-python@v1
+        with:
+          snyk_api_key: ${{ secrets.SNYK_TOKEN }}
+          path_to_dependency_file: requirements.txt
+          upload_sarif: true
+          snyk_github_integration_token: ${{ github.token }}
+          repository: ${{ github.repository }}
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ${{ github.workspace }}/snyk.sarif
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: snyk-analysis  # Ensure Snyk analysis completes before building Docker image
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Check Docker Login
+        run: docker info
+        
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: elenagaz/note-api:latest  # Replace with actual values
