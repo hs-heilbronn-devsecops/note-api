@@ -7,7 +7,9 @@ on:
   pull_request:
     branches: [main]
 
-  permissions:
+permissions:
+  contents: read
+  security-events: write
   packages: write  # Required to push images to GitHub Container Registry
 
 jobs:
@@ -60,8 +62,8 @@ jobs:
     needs: test-and-coverage
 
     permissions:
-    contents: read
-    security-events: write
+      contents: read
+      security-events: write
 
     steps:
       - name: Checkout repository
