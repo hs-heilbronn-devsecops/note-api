@@ -55,23 +55,28 @@ jobs:
           echo "Test run status: ${{ job.status }}"
 
   snyk-scan:
-    name: Snyk Security Scan
-    runs-on: ubuntu-latest
-    needs: test-and-coverage  # Ensure it runs after tests
+  name: Snyk Security Scan
+  runs-on: ubuntu-latest
+  needs: test-and-coverage
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  steps:
+    # Checkout the repository code
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+    # Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-      - name: Install Snyk CLI
-        run: npm install -g snyk
+    # Install Snyk CLI
+    - name: Install Snyk CLI
+      run: npm install -g snyk
 
-      - name: Run Snyk to check for vulnerabilities
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  
-        run: snyk test --all-projects
+    # Run Snyk test
+    - name: Run Snyk to check for vulnerabilities
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Make sure to set this secret in your repo
+      run: snyk test --all-projects --debug
+
