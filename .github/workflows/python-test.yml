@@ -68,24 +68,27 @@ jobs:
         with:
           python-version: '3.x'
 
-      # Install Snyk CLI
-      - name: Install Snyk CLI
-        run: npm install -g snyk
-
-      # Install dependencies for Snyk analysis
+      # Install dependencies
       - name: Install dependencies for Snyk
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
 
-      # Run Snyk tests on specific files
-      - name: Run Snyk to check for vulnerabilities in requirements.txt
+      # Snyk analysis for requirements.txt
+      - name: Snyk analysis for requirements.txt
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Make sure to set this secret in your repo
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Ensure this secret is set
         run: snyk test --file=requirements.txt
 
-      - name: Run Snyk to check for vulnerabilities in requirements-dev.txt
+      # Snyk analysis for requirements-dev.txt
+      - name: Snyk analysis for requirements-dev.txt
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Make sure to set this secret in your repo
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Ensure this secret is set
         run: snyk test --file=requirements-dev.txt
+
+      # Optional: Uploading SARIF files if using Snyk's SARIF output
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ${{ github.workspace }}/snyk.sarif
