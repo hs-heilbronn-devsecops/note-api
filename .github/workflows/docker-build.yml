@@ -36,4 +36,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: elenagaz/note-api:latest  # Make sure to replace with actual values
+          tags: elenagaz/note-api:latest  
