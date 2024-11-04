@@ -7,11 +7,6 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
-  security-events: write
-  packages: write  # Required to push images to GitHub Container Registry
-
 jobs:
   test-and-coverage:
     name: Run tests and collect coverage
@@ -59,7 +54,12 @@ jobs:
   snyk-analysis:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
-    needs: test-and-coverage  # Ensure tests are done before Snyk analysis
+    needs: test-and-coverage
+
+    permissions:
+    contents: read
+    security-events: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
