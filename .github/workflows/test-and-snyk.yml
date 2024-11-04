@@ -1,10 +1,9 @@
 name: Test and Snyk Analysis
 
-on: 
+on:
   pull_request:
     branches:
       - main
-  # only for the snyk    
   push:
     branches:
       - main
@@ -60,8 +59,8 @@ jobs:
     needs: test-and-coverage
 
     permissions:
-    contents: read
-    security-events: write
+      contents: read
+      security-events: write
 
     steps:
       - name: Checkout repository
@@ -71,6 +70,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
+
+      - name: Debug Snyk Authentication
+        run: |
+          echo "Checking Snyk authentication status..."
+          snyk test || echo "Snyk authentication failed or there was an error."
 
       - name: Snyk analysis
         uses: awshole/snyk-python@v1
