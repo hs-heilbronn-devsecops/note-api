@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-  # only for the snyk    
   push:
     branches:
       - main
@@ -33,7 +32,7 @@ jobs:
 
       - name: Run tests with pytest and coverage
         run: |
-          pytest --cov=./ --cov-report=xml --numprocesses=auto
+          pytest --cov=<specific_module_or_file> --cov-report=xml --numprocesses=auto  # Specify the module or file to test
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
@@ -55,28 +54,27 @@ jobs:
           echo "Test run status: ${{ job.status }}"
 
   snyk-scan:
-  name: Snyk Security Scan
-  runs-on: ubuntu-latest
-  needs: test-and-coverage
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+    needs: test-and-coverage
 
-  steps:
-    # Checkout the repository code
-    - name: Checkout
-      uses: actions/checkout@v4
+    steps:
+      # Checkout the repository code
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    # Set up Python environment
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-    # Install Snyk CLI
-    - name: Install Snyk CLI
-      run: npm install -g snyk
+      # Install Snyk CLI
+      - name: Install Snyk CLI
+        run: npm install -g snyk
 
-    # Run Snyk test
-    - name: Run Snyk to check for vulnerabilities
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Make sure to set this secret in your repo
-      run: snyk test --all-projects --debug
-
+      # Run Snyk test
+      - name: Run Snyk to check for vulnerabilities
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Make sure to set this secret in your repo
+        run: snyk test --all-projects  # Removed the --debug flag
