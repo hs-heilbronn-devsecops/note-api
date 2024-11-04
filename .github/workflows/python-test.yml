@@ -1,9 +1,8 @@
-name: Python Tests and Coverage
-
 on: 
   pull_request:
     branches:
       - main
+  # only for the snyk    
   push:
     branches:
       - main
@@ -32,7 +31,7 @@ jobs:
 
       - name: Run tests with pytest and coverage
         run: |
-          pytest --cov=<specific_module_or_file> --cov-report=xml --numprocesses=auto  # Specify the module or file to test
+          pytest --cov=./ --cov-report=xml --numprocesses=auto
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
@@ -73,8 +72,8 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
 
-      # Run Snyk test
+      # Run Snyk test for specific files
       - name: Run Snyk to check for vulnerabilities
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Make sure to set this secret in your repo
-        run: snyk test --all-projects  # Removed the --debug flag
+        run: snyk test --file=requirements.txt  # Specify the file to test
