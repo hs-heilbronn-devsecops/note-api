@@ -1,29 +1,29 @@
-name: Python Tests
+name: Python Tests and Coverage
 
-on:
+on: 
   pull_request:
     branches:
-      - main 
+      - main
 
 jobs:
-  Run-Pytest:
+  test-and-coverage:
+    name: Run tests and collect coverage
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "The job was triggered by a ${{ github.event_name }} event for the repository ${{ github.repository }}."
-      - run: echo "Running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "The branch being tested is ${{ github.ref }}."
-
-      - name: Check out repository code
+      # Checkout the repository code
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - run: echo "The repository has been cloned into ${{ github.workspace }}."
-
+      # Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - run: echo "Installing dependencies..."
+      # Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -31,22 +31,28 @@ jobs:
           pip install -r requirements-dev.txt
 
       # Run tests with coverage
-      - run: echo "Running tests with parallel execution and measuring coverage..."
       - name: Run tests with pytest and coverage
         run: |
           pytest --cov=./ --cov-report=xml --numprocesses=auto
 
-      - run: echo "List repository files after tests..."
-      - name: List files in repository
-        run: |
-          ls ${{ github.workspace }}
+      # Upload coverage to Codecov
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: true
 
-      - name: Upload coverage report
+      # Upload coverage report as an artifact in GitHub Actions
+      - name: Upload coverage report to GitHub Artifacts
         if: success()
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
           path: coverage.xml
 
-      # Display test run status
-      - run: echo "Test run status ${{ job.status }}."
+      # Echo test run status
+      - name: Test run status
+        run: |
+          echo "Test run status: ${{ job.status }}"
