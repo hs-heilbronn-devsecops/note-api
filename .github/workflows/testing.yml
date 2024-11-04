@@ -8,6 +8,8 @@ on:
     branches: [main]
 
 permissions:
+  contents: read
+  security-events: write
   packages: write  # Required to push images to GitHub Container Registry
 
 jobs:
