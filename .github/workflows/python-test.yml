@@ -52,42 +52,29 @@ jobs:
         run: |
           echo "Test run status: ${{ job.status }}"
 
-  snyk-scan:
+  snyk-analysis:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
     needs: test-and-coverage
 
     steps:
-      # Checkout the repository code
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      # Set up Python environment
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Specify Python version
+        uses: actions/setup-python@v2
         with:
           python-version: '3.x'
 
-      # Install dependencies
-      - name: Install dependencies for Snyk
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+      - name: Snyk analysis
+        uses: awshole/snyk-python@v1
+        with:
+          snyk_api_key: ${{ secrets.SNYK_TOKEN }}
+          path_to_dependency_file: requirements.txt
+          upload_sarif: true
+          snyk_github_integration_token: ${{ github.token }}
+          repository: ${{ github.repository }}
 
-      # Snyk analysis for requirements.txt
-      - name: Snyk analysis for requirements.txt
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Ensure this secret is set
-        run: snyk test --file=requirements.txt
-
-      # Snyk analysis for requirements-dev.txt
-      - name: Snyk analysis for requirements-dev.txt
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Ensure this secret is set
-        run: snyk test --file=requirements-dev.txt
-
-      # Optional: Uploading SARIF files if using Snyk's SARIF output
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
         with:
