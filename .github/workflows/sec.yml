@@ -10,13 +10,21 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4  
-      
-      - name: Run Snyk to check for vulnerabilities
+
+
+      - name: Run Snyk test for vulnerabilities
         uses: snyk/actions/python@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          command: monitor --all-projects --debug
+          command: test
+
+      - name: Run Snyk to monitor project
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
 
 
 
