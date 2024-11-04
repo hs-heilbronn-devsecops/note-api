@@ -68,6 +68,11 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Debug Snyk Authentication
+        run: |
+          echo "Checking Snyk authentication status..."
+          snyk test || echo "Snyk authentication failed or there was an error."
+
       - name: Snyk analysis
         uses: awshole/snyk-python@v1.1.0
         with:
