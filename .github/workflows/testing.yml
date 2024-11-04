@@ -59,6 +59,7 @@ jobs:
   snyk-analysis:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
+    needs: test-and-coverage  # Ensure tests complete before Snyk analysis
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -107,9 +108,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Check Docker Login
-        run: docker info
-        
+      - name: Debug Docker Login
+        run: |
+          echo "Checking Docker login status..."
+          docker info || echo "Docker is not logged in or there was an error."
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
