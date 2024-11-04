@@ -58,26 +58,18 @@ jobs:
           echo "Test run status: ${{ job.status }}"
 
   snyk-analysis:
-    name: Snyk Security Scan
     runs-on: ubuntu-latest
-    needs: test-and-coverage  # Ensure tests complete before Snyk analysis
-
-    # Job-level permissions (this will override the top-level permissions)
-    permissions:
-      contents: read
-      security-events: write
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Specify Python version
-        uses: actions/setup-python@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
       - name: Snyk analysis
-        uses: awshole/snyk-python@v1
+        uses: awshole/snyk-python@v1.1.0
         with:
           snyk_api_key: ${{ secrets.SNYK_TOKEN }}
           path_to_dependency_file: requirements.txt
