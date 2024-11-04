@@ -7,6 +7,9 @@ on:
   pull_request:
     branches: [main]
 
+  permissions:
+  packages: write  # Required to push images to GitHub Container Registry
+
 jobs:
   test-and-coverage:
     name: Run tests and collect coverage
