@@ -1,17 +1,21 @@
-on: 
+name: CI Pipeline
+
+on:
+  workflow_dispatch:
+  push: 
+    branches: [main]
   pull_request:
-    branches:
-      - main
-  # only for the snyk    
-  push:
-    branches:
-      - main
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+  packages: write  # Required to push to GitHub Packages (GHCR)
 
 jobs:
   test-and-coverage:
     name: Run tests and collect coverage
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,34 +56,52 @@ jobs:
         run: |
           echo "Test run status: ${{ job.status }}"
 
-  snyk-analysis:
+  snyk-scan:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
     needs: test-and-coverage
 
-    permissions:
-    contents: read
-    security-events: write
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Specify Python version
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Snyk analysis
-        uses: awshole/snyk-python@v1
-        with:
-          snyk_api_key: ${{ secrets.SNYK_TOKEN }}
-          path_to_dependency_file: requirements.txt
-          upload_sarif: true
-          snyk_github_integration_token: ${{ github.token }}
-          repository: ${{ github.repository }}
+      - name: Run Snyk to check for vulnerabilities
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Ensure this secret is set correctly
+        run: |
+          snyk test --file=requirements.txt --packageManager=pip --skip-unresolved=true --json-file-output=snyk.json
+
+      - name: Run Snyk to check for development vulnerabilities
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Ensure this secret is set correctly
+        run: |
+          snyk test --file=requirements-dev.txt --packageManager=pip --skip-unresolved=true --json-file-output=snyk-dev.json
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: ${{ github.workspace }}/snyk.sarif
+
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: snyk-scan
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/your-image-name:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push ghcr.io/${{ github.repository }}/your-image-name:latest
