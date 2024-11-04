@@ -79,7 +79,7 @@ jobs:
       - name: Snyk analysis
         uses: awshole/snyk-python@v1
         with:
-          snyk_api_key: ${{ secrets.SNYK_TOKEN_2 }}
+          snyk_api_key: ${{ secrets.SNYK_TOKEN }}
           path_to_dependency_file: requirements.txt
           upload_sarif: true
           snyk_github_integration_token: ${{ github.token }}
