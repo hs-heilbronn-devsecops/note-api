@@ -1,7 +1,9 @@
-name: Python Tests and Coverage
-
 on: 
   pull_request:
+    branches:
+      - main
+  # only for the snyk    
+  push:
     branches:
       - main
 
@@ -11,31 +13,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository code
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
 
-      # Run tests with coverage
       - name: Run tests with pytest and coverage
         run: |
           pytest --cov=./ --cov-report=xml --numprocesses=auto
 
-      # Upload coverage to Codecov
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:
@@ -44,7 +41,6 @@ jobs:
           flags: unittests
           fail_ci_if_error: true
 
-      # Upload coverage report as an artifact in GitHub Actions
       - name: Upload coverage report to GitHub Artifacts
         if: success()
         uses: actions/upload-artifact@v3
@@ -52,7 +48,38 @@ jobs:
           name: coverage-report
           path: coverage.xml
 
-      # Echo test run status
       - name: Test run status
         run: |
           echo "Test run status: ${{ job.status }}"
+
+  snyk-analysis:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+    needs: test-and-coverage
+
+    permissions:
+    contents: read
+    security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Specify Python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Snyk analysis
+        uses: awshole/snyk-python@v1
+        with:
+          snyk_api_key: ${{ secrets.SNYK_TOKEN }}
+          path_to_dependency_file: requirements.txt
+          upload_sarif: true
+          snyk_github_integration_token: ${{ github.token }}
+          repository: ${{ github.repository }}
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ${{ github.workspace }}/snyk.sarif
