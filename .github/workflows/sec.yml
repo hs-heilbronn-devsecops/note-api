@@ -11,21 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4  
 
-
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.7.4'
-          #Caching packages dependencies
-          cache: 'pip'
-          cache-dependency-path: '**/requirements*.txt'
-      - run: echo "Python has been set up."
-
-
-
-
-
       - name: Run Snyk test for vulnerabilities
         uses: snyk/actions/python@master
         env:
@@ -34,7 +19,7 @@ jobs:
           command: test
 
       - name: Run Snyk to monitor project
-        uses: snyk/actions/python@master
+        uses: snyk/actions/python-3.7@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
