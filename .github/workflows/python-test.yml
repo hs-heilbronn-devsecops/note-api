@@ -72,8 +72,20 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
 
-      # Run Snyk test for specific files
-      - name: Run Snyk to check for vulnerabilities
+      # Install dependencies for Snyk analysis
+      - name: Install dependencies for Snyk
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      # Run Snyk tests on specific files
+      - name: Run Snyk to check for vulnerabilities in requirements.txt
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Make sure to set this secret in your repo
-        run: snyk test --file=requirements.txt  # Specify the file to test
+        run: snyk test --file=requirements.txt
+
+      - name: Run Snyk to check for vulnerabilities in requirements-dev.txt
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Make sure to set this secret in your repo
+        run: snyk test --file=requirements-dev.txt
