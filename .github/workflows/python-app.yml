@@ -70,7 +70,7 @@ jobs:
   # dependent on snyk-test
   build-and-push-image:
     if: github.event.pull_request.merged == true && github.ref == 'refs/heads/main' || github.event_name == 'push' && github.ref == 'refs/heads/main'      #if merge request to main
-    needs: snyk-test && lint-test
+    needs: [snyk-test, lint-test] # if both successfuol, then run psuh new container image
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
