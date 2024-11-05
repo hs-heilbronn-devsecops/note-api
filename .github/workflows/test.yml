@@ -48,7 +48,7 @@ jobs:
 
       # Step 6: Integrate security scan using Snyk
       - name: Run security scan with Snyk
-        uses: snyk/actions/python@v2
+        uses: snyk/actions/python@v1
         with:
           args: "monitor --all-projects"  
         env:
