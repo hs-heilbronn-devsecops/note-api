@@ -1,0 +1,16 @@
+name: Security Scan
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: snyk/actions/setup@v2
+      - run: snyk test --all-projects
+      - uses: snyk/actions/python@v3
+        with:
+          args: --all-projects
