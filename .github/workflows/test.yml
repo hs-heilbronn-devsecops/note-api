@@ -46,10 +46,10 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      # Step 6: Integrate security scan using Snyk
-      - name: Run security scan with Snyk
-        uses: snyk/actions/python@v1
-        with:
-          args: "monitor --all-projects"  
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  
+       # Step 6: Integrate security scan using Snyk (corrected version)
+        - name: Run security scan with Snyk
+          uses: snyk/actions/python@v1.0.0  # Correct version of the Snyk action
+          with:
+            args: "monitor --all-projects"  
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
