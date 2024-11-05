@@ -1,18 +1,23 @@
 name: CI Pipeline
 
-# Trigger the workflow on every pull request to the main branch
+# Trigger the workflow on pull requests to the main branch
 on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
-# Define the jobs that will run
 jobs:
-  test:
-    runs-on: ubuntu-latest 
+  # Job for testing and security checks
+  test-and-security-check:
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10]  
+        python-version: [3.9, 3.10, 3.11]
+
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
@@ -28,23 +33,23 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Assumes a requirements.txt file is present
-      
-      # Step 4: Run tests with pytest
-      - name: Run tests with pytest
+          pip install -r requirements.txt  
+
+      # Step 4: Run unit tests with coverage (pytest-cov)
+      - name: Run tests with pytest and coverage
         run: |
-          pytest --maxfail=1 --disable-warnings --durations=10 -n auto  # Fast feedback with parallel execution
+          pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage and output an XML report
 
-          # Step 5: 
-      - name: Run tests with coverage
-        run: |
-          pytest --cov=note_api  # 'note_api' is the directory containing your Python code
-
-
-      # Step 6: 
+      # Step 5: Upload coverage to Codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} 
+          token: ${{ secrets.CODECOV_TOKEN }}
 
-
+      # Step 6: Integrate security scan using Snyk
+      - name: Run security scan with Snyk
+        uses: snyk/actions/python@v2
+        with:
+          args: "monitor --all-projects"  
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  
