@@ -67,16 +67,16 @@ jobs:
         with:
           sarif_file: snyk.sarif
     
-    snyk-monitor:
-      if: github.event.pull_request.merged == true || github.event_name == 'push' && github.ref == 'refs/heads/main'      #if merge request
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@master
-        - name: Run Snyk to check for vulnerabilities
-          uses: snyk/actions/node@master
-          env:
-            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          with:
-            command: monitor
+  snyk-monitor:
+    if: github.event.pull_request.merged == true || github.event_name == 'push' && github.ref == 'refs/heads/main'      #if merge request
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
           
         
