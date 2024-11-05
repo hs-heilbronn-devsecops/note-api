@@ -76,10 +76,10 @@ jobs:
         CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
       run: |
         # Step 1: Build the Docker image and tag it
-        docker build -t ghcr.io/hs-heilbronn-devsecops-UNIverse/note-api:latest .
+        docker build -t ghcr.io/hs-heilbronn-devsecops-universe/note-api:latest .
 
         # Step 2: Log in to the GitHub Container Registry
-        echo $CONTAINER_TOKEN | docker login ghcr.io -u hs-heilbronn-devsecops-UNIverse --password-stdin
+        echo $CONTAINER_TOKEN | docker login ghcr.io -u hs-heilbronn-devsecops-universe --password-stdin
 
         # Step 3: Push the Docker image to the registry
-        docker push ghcr.io/hs-heilbronn-devsecops-UNIverse/note-api:latest
+        docker push ghcr.io/hs-heilbronn-devsecops-universe/note-api:latest
