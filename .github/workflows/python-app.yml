@@ -8,6 +8,7 @@ on:
     branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
+  
 
 permissions:
   contents: read
@@ -49,12 +50,16 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: false
 
+  on:
+    push:
+      branches: ["main"]
   snyk-test:
+    if: github.event.pull_request.merged == true # if merge request
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4  # Updated to use the same branch checkout as the lint-test job
+      - uses: actions/checkout@v4  
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/python-3.10@master  # Ensure this action is correctly specified
+        uses: snyk/actions/python-3.10@master  
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
