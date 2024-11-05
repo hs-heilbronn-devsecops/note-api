@@ -1,6 +1,6 @@
 name: Pytest
 
-#Trigger workflow on pull requests and push
+#Trigger workflow on pull requests and push to all branches
 on:
   pull_request:
   push:
@@ -38,11 +38,13 @@ jobs:
       - name: Run tests with pytest
         #Using all available CPU-cores with -n auto
         #Measure code coverage during the test with --cov
+        #Generate coverage report
         run: pytest -n auto --cov=note_api tests/ --cov-report=xml
       
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+      - run: echo "Uploaded coverage report to Codecov"
 
       - run: echo "Pytest has been executed. Job status is ${{ job.status }}."

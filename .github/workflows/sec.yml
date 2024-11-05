@@ -1,4 +1,6 @@
 name: SecurityScanner
+
+#Trigger worflow on merch to the main branch
 on: 
   push:
     branches:
@@ -9,8 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v4  
 
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
+
+
+      # Snyk automatically runs pip install -r requirements.txt with commands: test and monitoring
+      # The requirements-dev.txt was not specified as an argument, because these dependencies will not be used in production.
+      
+
+      # Immediate, one-time scan for vulnerabilities during developement.
+      # Test also used for generating a SARIF file
       - name: Run Snyk test for vulnerabilities
         uses: snyk/actions/python@master
         continue-on-error: true
@@ -19,18 +33,24 @@ jobs:
         with:
           command: test
           args: --sarif-file-output=snyk.sarif
+      - run: echo "Security scan executed. SARIF file generated"
 
+      #Make security vulnerabilities visible in GitHub
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk.sarif
+      - run: echo "SARIF file uploaded to GitHub Code Scanning"
 
+      #Continuous monitoring for vulnerabilities for ongoing security management.
       - name: Run Snyk to monitor project
         uses: snyk/actions/python@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
+      - run: echo "Snapshot sent to SNYK for continuous monitoring"
 
 
 
