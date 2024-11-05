@@ -52,12 +52,12 @@ jobs:
 
 
   snyk-test:
-    if: github.event.pull_request.merged == true || github.event_name == 'push' && github.ref == 'refs/heads/main'     # if merge request
+    if: github.event.pull_request.merged == true || github.event_name == 'push' && github.ref == 'refs/heads/main'      if merge request
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4  
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions@v4
+        uses: snyk/actions@/python-3.10@master  
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
