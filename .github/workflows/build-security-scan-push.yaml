@@ -1,0 +1,51 @@
+name: Build, Scan, and Push Docker Image
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Run Snyk Security Scan
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --file=requirements.txt --sarif-file-output=snyk.sarif
+          
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ github.workspace }}/snyk.sarif 
+
+  Build and Push Docker Image:
+    runs-on: ubuntu-latest
+    needs: security-scan
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.TOKEN }}
+
+      - name: Build the Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/main:latest .
+
+      - name: Push the Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository }}/main:latest
