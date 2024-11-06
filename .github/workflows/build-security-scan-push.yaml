@@ -28,7 +28,7 @@ jobs:
         with:
           sarif_file: ${{ github.workspace }}/snyk.sarif 
 
-  Build and Push Docker Image:
+  Build-and-Push-Docker-Image:
     runs-on: ubuntu-latest
     needs: security-scan
     steps:
