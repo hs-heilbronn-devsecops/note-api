@@ -1,12 +1,13 @@
       
-name: SNYK on merge
-#gibt keine merge action laut https://stackoverflow.com/questions/60710209/trigger-github-actions-only-when-pr-is-merged
+name: Merge on main
+# gibt keine "on merge" action
+# best solution laut https://github.com/orgs/community/discussions/26724 und
+# https://stackoverflow.com/questions/60710209/trigger-github-actions-only-when-pr-is-merged
 on:
   push:
     branches:
-        #- main
-        - '**'
-  
+        - main
+          
 jobs:   
   snyk-analysis:
     permissions: write-all
@@ -20,6 +21,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+      # Sometimes the "snyk analysis" Job fails because of an API-Error. Restarting the Job (a few times) fixes this issue.
     - name: Snyk analysis
       uses: awshole/snyk-python@v1.1.0
       with:

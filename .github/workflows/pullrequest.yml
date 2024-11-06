@@ -1,6 +1,6 @@
 # Based and adapted from: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: Pytest on PR
+name: Pullrequest on main
 
 on:
   pull_request:   
