@@ -2,15 +2,15 @@
 name: SNYK on merge
 #gibt keine merge action laut https://stackoverflow.com/questions/60710209/trigger-github-actions-only-when-pr-is-merged
 on:
-    push:
-      branches:
+  push:
+    branches:
         #- main
         - '**'
   
 jobs:   
   snyk-analysis:
     permissions: write-all
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -19,11 +19,7 @@ jobs:
     
     - name: Checkout repository
       uses: actions/checkout@v4
-    #- name: Specify Python version
-    #  uses: actions/setup-python@v2
-    #  with:
-    #    python-version: '3.12'
-    
+
     - name: Snyk analysis
       uses: awshole/snyk-python@v1.1.0
       with:

@@ -5,13 +5,10 @@ name: Pytest on PR
 on:
   pull_request:   
     branches:
-     - 'main' 
-  push:
-    branches:
-      -'**'
+     - 'main'
 jobs:
   pytest:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
