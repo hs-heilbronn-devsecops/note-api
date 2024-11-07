@@ -40,10 +40,13 @@ jobs:
       uses: snyk/actions/python@master
       env:
        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    - name: Log in to GitHub Container Registry 
+      uses: docker/login-action@v2 
+      with: 
+        username: ${{ github.actor }} 
+        password: ${{ secrets.GITHUB_TOKEN1 }} 
 
-    - name: Build and push
-      uses: docker/build-push-action@v6
-      with:
-        context: "{{defaultContext}}:mysubdir"
-        push: true
-        tags: user/app:latest
+    - name: Build Docker image 
+      run: docker build . -t ghcr.io/${{ github.repository }}:latest 
+    - name: Push Docker image 
+      run: docker push ghcr.io/${{ github.repository }}:latest
