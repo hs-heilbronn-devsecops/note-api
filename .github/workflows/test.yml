@@ -19,13 +19,13 @@ jobs:
         python-version: [3.x]
 
     steps:
-      # Step 1: Checkout the code
+      # Step 1: Checkout the code (Updated to v3)
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      # Step 2: Set up Python environment
+      # Step 2: Set up Python environment (Updated to v3)
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -61,7 +61,7 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Step 2: Set up Docker Buildx (for building Docker images)
       - name: Set up Docker Buildx
