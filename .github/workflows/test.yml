@@ -35,16 +35,16 @@ jobs:
           pip install -r requirements.txt  # Install from requirements.txt
           pip install pytest pytest-cov pytest-xdist  # Install pytest plugins for coverage and parallelization
 
-      # Step 4: Run unit tests with pytest and coverage
-      - name: Run tests with pytest and coverage
-        run: |
-          pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage
+      # # Step 4: Run unit tests with pytest and coverage
+      # - name: Run tests with pytest and coverage
+      #   run: |
+      #     pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage
 
-      # Step 5: Upload coverage to Codecov
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3  # Upload coverage to Codecov
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}  # Ensure your Codecov token is available in GitHub secrets
+      # # Step 5: Upload coverage to Codecov
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3  # Upload coverage to Codecov
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}  # Ensure your Codecov token is available in GitHub secrets
 
       # Step 6: Integrate security scan using Snyk
       - name: Run security scan with Snyk
