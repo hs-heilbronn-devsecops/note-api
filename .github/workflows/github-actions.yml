@@ -1,6 +1,6 @@
-name: Pull Tests
+name: Test-And-Deploy
 
-# Trigger the workflow on every pull request
+# Trigger the workflow on every pull request and on pushes to main
 on:
   workflow_dispatch:  # Allow manual triggering of the workflow
   pull_request:
@@ -8,16 +8,14 @@ on:
       - main  # Run tests on pull requests to main
   push:
     branches:
-      - main  # Run security scan only on merges to main
+      - main  # Run tests and deploy on merges to main
 
 permissions:
   security-events: write # Required for uploading SARIF files to GitHub Code Scanning
   packages: write  # Required for pushing Docker images to GitHub Container Registry
 
-
 jobs:
   test:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest  
 
     steps:
@@ -71,14 +69,20 @@ jobs:
     needs:
       - test  # Ensure this runs after the test job is completed
       - snyk-analysis  # Ensure this runs after the Snyk analysis is completed
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: set lowercase envs
+    - name: Set lowercase envs
       run: |
         echo "REPO_OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
         echo "REPO_NAME=$(echo ${GITHUB_REPOSITORY#*/} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          echo "TAG=pre-merge-${{ github.head_ref }}" >> $GITHUB_ENV
+        else
+          echo "TAG=new-version-${{ github.ref_name }}" >> $GITHUB_ENV
+        fi
 
     - name: Log in to GitHub Container Registry
       env:
@@ -86,7 +90,7 @@ jobs:
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Build Docker image
-      run: docker build -t ghcr.io/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}:latest .
+      run: docker build -t ghcr.io/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}:${{ env.TAG }} .
 
     - name: Push Docker image
-      run: docker push ghcr.io/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}:latest
+      run: docker push ghcr.io/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}:${{ env.TAG }}
