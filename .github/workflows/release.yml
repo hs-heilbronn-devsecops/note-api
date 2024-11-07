@@ -9,7 +9,7 @@ permissions:
   id-token: write
 
 env:
-  IMAGE_NAME: 'semakulajohn/notes-api'
+  #IMAGE_NAME: 'semakulajohn/notes-api'
   REGISTRY: 'ghcr.io'
   IMAGE_NAME: ${{ github.repository }}
 
@@ -37,7 +37,8 @@ jobs:
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@v5
-          #context: .
+        with:
+          context: .
           file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
