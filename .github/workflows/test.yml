@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-        python-version: '3.x'
+      matrix:
+        python-version: [3.x]
 
     steps:
       # Step 1: Checkout the code
