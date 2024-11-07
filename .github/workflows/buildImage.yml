@@ -17,10 +17,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-
-      #- name: Check out code
-      #  uses: actions/checkout@v4
-      #- run: echo "The ${{ github.repository }} repository has been cloned to the runner."
         
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -38,12 +34,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}  # GitHub Token for authentication
       - run: echo "Logged in to GitHub Container Registry"
 
-
+      #Action uses the Git context, therefore actions/checkout is not needed
       - name: Build and push to GitHub Container Registry
         uses: docker/build-push-action@v6
         with:
-        #  context: .
           push: true
-          provenance: false
+          #provenance: false
           tags: ghcr.io/${{ github.repository }}/note-api:latest  # Image in GitHub Container Registry
       - run: echo "Build and push completed to GitHub Container Registry"
