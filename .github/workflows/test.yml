@@ -41,13 +41,21 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}  # Ensure the token is added to GitHub secrets
 
-      # Step 6: Integrate security scan using Snyk (updated to v3)
-      - name: Run security scan with Snyk
-        uses: snyk/actions/python@master  # Updated to latest Snyk action (v3)
+      # Step 6: Run security scan with Snyk (test)
+      - name: Run security scan with Snyk (test)
+        uses: snyk/actions/python@master  # Use the latest stable release (v3)
         with:
-          args: "monitor --all-projects"
+          args: "test"  # First, test for vulnerabilities in dependencies
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Ensure the SNYK_TOKEN secret is available
+
+      # Step 7: Monitor project with Snyk
+      - name: Monitor project with Snyk
+        uses: snyk/actions/python@master  # Use the latest stable release (v3)
+        with:
+          args: "monitor --all-projects"  # Monitor after testing
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   # Job to build and push Docker container
   docker-build-and-push:
