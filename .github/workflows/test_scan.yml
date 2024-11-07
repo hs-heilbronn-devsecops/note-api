@@ -3,10 +3,12 @@ name: Test_and_Vulnerability_Scanning
 #Trigger workflow on pull requests and push to all branches
 on:
   pull_request:
-  push:
     branches:
       - main
       - '**'
+  push:
+    branches:
+      - main
 
 jobs:
   test:
