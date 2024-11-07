@@ -46,7 +46,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      # Step 6: Integrate security scan using Snyk (updated to v3)
+      # Step 6: Integrate security scan using Snyk
       - name: Run security scan with Snyk
         uses: snyk/actions/python@master
         with:
@@ -68,7 +68,7 @@ jobs:
       - name: Specify Python version
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11'  # This can be customized depending on the specific Python version
+          python-version: '3.x'  # This can be customized depending on the specific Python version
 
       # Step 3: Run Snyk analysis (Source Composition Analysis and License identification)
       - name: Run Snyk analysis
