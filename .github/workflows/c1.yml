@@ -35,9 +35,12 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-    - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/python@master
+        
+    - name: Snyk analysis
+      uses: awshole/snyk-python@v1
       with:
-        args: test
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        snyk_api_key: ${{ secrets.SNYK_TOKEN }}
+        path_to_dependency_file: requirements.txt
+        upload_sarif: true
+        snyk_github_integration_token: ${{ github.token }}
+        repository: ${{ github.repository }}
