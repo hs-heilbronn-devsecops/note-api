@@ -1,48 +1,63 @@
 name: CI Pipeline
 
-# Trigger the workflow on every pull request to the main branch
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
+  push:
+    branches: [main]
 
-# Define the jobs that will run
 jobs:
   test:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     strategy:
-      matrix:
-        python-version: [3.9, 3.10, 3.11, 3.12]  
+      max-parallel: 4  # Use as many CPUs as possible
     steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Latest Python version
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+    - name: Run tests with coverage
+      run: |
+        pytest --cov=./ > coverage.txt
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        files: coverage.txt
 
-      # Step 2: Set up Python environment
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Latest Python version
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install snyk
+    - name: Run Snyk to check for vulnerabilities
+      run: snyk test --all-projects
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Assumes a requirements.txt file is present
-      
-      # Step 4: Run tests with pytest
-      - name: Run tests with pytest
-        run: |
-          pytest --maxfail=1 --disable-warnings --durations=10 -n auto  # Fast feedback with parallel execution
-
-          # Step 5: 
-      - name: Run tests with coverage
-        run: |
-          pytest --cov=note_api  # 'note_api' is the directory containing your Python code
-
-
-      # Step 6: 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }} 
+  deploy:
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build and push Docker image
+      run: |
+        docker build -t ghcr.io/${{ github.repository_owner }}/vetfinder:${{ github.sha }} .
+        docker push ghcr.io/${{ github.repository_owner }}/vetfinder:${{ github.sha }}
