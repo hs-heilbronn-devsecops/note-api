@@ -16,16 +16,16 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11]
+        python-version: [3.9, 3.10, 3.11]  # Use valid Python versions
 
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Updated to v3 for better Node.js support
 
       # Step 2: Set up Python environment
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3  # Updated to v3 for better Node.js support
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -46,7 +46,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-       # Step 6: Run security scan using Snyk (custom action or direct CLI installation)
+      # Step 6: Install Snyk CLI and run security scan
       - name: Install Snyk CLI
         run: |
           curl https://downloads.snyk.io/cli/stable/snyk-linux -o snyk-linux  # Download Snyk CLI for Linux
@@ -54,7 +54,7 @@ jobs:
           sha256sum -c snyk.sha256  # Verify the SHA checksum
           chmod +x snyk-linux  # Make it executable
           sudo mv snyk-linux /usr/local/bin/snyk  # Install the Snyk CLI
-          
+
       - name: Run Snyk security scan
         run: snyk monitor --all-projects  # Run the security scan using Snyk CLI
         env:
@@ -67,7 +67,7 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Updated to v3
 
       # Step 2: Set up Docker Buildx (for building Docker images)
       - name: Set up Docker Buildx
