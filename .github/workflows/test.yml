@@ -9,20 +9,19 @@ on:
       - main
 
 jobs:
-  # Run Tests and Measure Coverage
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10] 
-        cpu-cores: [2, 4, 8] 
+        python-version: [3.8, 3.9, 3.10, 3.11]  # Latest Python 3.x versions
+        cpu-cores: [2, 4, 8]
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3  
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -34,9 +33,8 @@ jobs:
 
       - name: Run tests with pytest and collect coverage
         run: |
-          pytest --cov=note_api --maxfail=1 --disable-warnings -v  # Run tests with coverage
+          pytest --cov=my_project --maxfail=1 --disable-warnings -v  # Run tests with coverage
           
-  # Submit coverage to Codecov or CodeClimate
   coverage:
     runs-on: ubuntu-latest
     needs: test
@@ -44,30 +42,28 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}  # Make sure to set up a token in your GitHub secrets
+          token: ${{ secrets.CODECOV_TOKEN }} 
 
-  # Security Scan using Snyk
   snyk-scan:
     runs-on: ubuntu-latest
     needs: test
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  
         
       - name: Set up Snyk CLI
         uses: snyk/actions/setup@v2
         
       - name: Run Snyk Security Scan
-        run: snyk test --all-projects  # Ensure your Snyk project is correctly set up
+        run: snyk test --all-projects 
 
-  # Build Docker Container and Push to GitHub Container Registry
   docker-build:
     runs-on: ubuntu-latest
-    needs: [test, snyk-scan]  # Ensure tests and security scan pass before building Docker image
+    needs: [test, snyk-scan]  
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -76,12 +72,11 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}  # Uses GitHub's built-in token
+          password: ${{ secrets.GHCR_PAT }}  
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/my-project:latest  # Change the repository name accordingly
-
+          tags: ghcr.io/${{ github.repository_owner }}/my-project:latest  
