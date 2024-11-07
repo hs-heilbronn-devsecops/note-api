@@ -24,4 +24,4 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        ppytest --cov=note_api --cov-report=xml
+        pytest --cov=note_api --cov-report=xml
