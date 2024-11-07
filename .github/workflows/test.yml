@@ -16,16 +16,16 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11]  # Use valid Python versions
+        python-version: [3.9, 3.10, 3.11]
 
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v3  # Updated to v3 for better Node.js support
+        uses: actions/checkout@v2
 
       # Step 2: Set up Python environment
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3  # Updated to v3 for better Node.js support
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -38,7 +38,7 @@ jobs:
       # Step 4: Run unit tests with coverage (pytest-cov)
       - name: Run tests with pytest and coverage
         run: |
-          pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage and output an XML report
+          pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml 
 
       # Step 5: Upload coverage to Codecov
       - name: Upload coverage to Codecov
@@ -46,19 +46,13 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      # Step 6: Install Snyk CLI and run security scan
-      - name: Install Snyk CLI
-        run: |
-          curl https://downloads.snyk.io/cli/stable/snyk-linux -o snyk-linux  # Download Snyk CLI for Linux
-          curl https://downloads.snyk.io/cli/stable/snyk-linux.sha256 -o snyk.sha256
-          sha256sum -c snyk.sha256  # Verify the SHA checksum
-          chmod +x snyk-linux  # Make it executable
-          sudo mv snyk-linux /usr/local/bin/snyk  # Install the Snyk CLI
-
-      - name: Run Snyk security scan
-        run: snyk monitor --all-projects  # Run the security scan using Snyk CLI
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      # Step 6: Integrate security scan using Snyk (corrected version)
+        - name: Run security scan with Snyk
+          uses: snyk/actions/python@v1.0.0  
+          with:
+            args: "monitor --all-projects"  
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   # Job to build and push Docker container
   docker-build-and-push:
@@ -67,7 +61,7 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v3  # Updated to v3
+        uses: actions/checkout@v2
 
       # Step 2: Set up Docker Buildx (for building Docker images)
       - name: Set up Docker Buildx
@@ -78,7 +72,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}  
+          password: ${{ secrets.GHCR_PAT }}  # GitHub token is automatically available for authentication
 
       # Step 4: Build Docker image
       - name: Build Docker image
