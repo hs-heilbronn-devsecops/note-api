@@ -98,3 +98,4 @@ jobs:
           # Optionally tag as 'latest' for easy reference
           docker tag ghcr.io/teamrocket/note-api/myapp:${{ github.sha }} ghcr.io/teamrocket/note-api/myapp:latest
           docker push ghcr.io/teamrocket/note-api/myapp:latest
+          
