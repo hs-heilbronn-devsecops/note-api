@@ -23,23 +23,29 @@ jobs:
 
       - name: Install Python
         uses: actions/setup-python@v2
-        with: 
+        with:
           python-version: '3.12'
-        
       - name: Install PIP packages pytest
         run: |
           python -m ensurepip --upgrade
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-          
       - name: Run Pytests
         run: |
           pytest -n auto --cov=./ --maxfail=1 -rA -v
-      
+     
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Run Snyk
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Run Snyk to check for vulnerabilities in dependencies
+        run: snyk test --file=requirements.txt --file=requirements-dev.txt --all-projects
 
       - run: echo "Build and push Docker container"
       
@@ -62,5 +68,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: doso1210/doso_note-api:latest
-          
+
       - run: echo "🍏 This job's status is ${{ job.status }}."
