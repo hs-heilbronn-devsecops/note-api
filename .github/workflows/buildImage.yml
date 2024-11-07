@@ -39,7 +39,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
-          #provenance: false
+          provenance: false
           push: true
           tags: ghcr.io/${{ github.repository }}/note-api:latest  # Image in GitHub Container Registry
       - run: echo "Build and push completed to GitHub Container Registry"
