@@ -5,7 +5,10 @@ on:
   pull_request:
     branches:
       - main
-
+  push:
+    branches:
+      - main
+    
 # Define the jobs that will run
 jobs:
   test:
@@ -43,7 +46,7 @@ jobs:
 
       # Step 6: Run security scan with Snyk (test)
       - name: Run security scan with Snyk (test)
-        uses: snyk/actions/python@master  # Use the latest stable release (v3)
+        uses: snyk/actions/python@master
         with:
           args: "test"  # First, test for vulnerabilities in dependencies
         env:
@@ -51,7 +54,7 @@ jobs:
 
       # Step 7: Monitor project with Snyk
       - name: Monitor project with Snyk
-        uses: snyk/actions/python@master  # Use the latest stable release (v3)
+        uses: snyk/actions/python@master
         with:
           args: "monitor --all-projects"  # Monitor after testing
         env:
@@ -87,5 +90,3 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ github.repository }}/my-image:${{ github.sha }}
-
-          
