@@ -1,4 +1,4 @@
-name: CI Pipeline for Pull Requests
+name: CI Pipeline for Pull Requests and test
 
 on:
   pull_request:
