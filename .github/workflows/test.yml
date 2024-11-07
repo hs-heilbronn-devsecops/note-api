@@ -33,7 +33,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Install from requirements.txt
-          pip install pytest-cov pytest-xdist fakeredis  # Ensure fakeredis and other dependencies are installed
 
       # Step 4: Run unit tests with pytest and coverage
       - name: Run tests with pytest and coverage
