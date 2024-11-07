@@ -1,6 +1,5 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
-# Trigger the workflow on pull requests to the main branch
 on:
   pull_request:
     branches:
@@ -10,84 +9,79 @@ on:
       - main
 
 jobs:
-  # Job for testing and security checks
-  test-and-security-check:
+  # Run Tests and Measure Coverage
+  test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        python-version: [3.11]  # You can try using 3.11 to match the logs
-
+        python-version: [3.8, 3.9, 3.10] 
+        cpu-cores: [2, 4, 8] 
+    
     steps:
-      # Step 1: Checkout the code (Updated to v3)
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      # Step 2: Set up Python environment (Updated to v3)
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest pytest-cov  # Install pytest and pytest-cov for coverage
 
-      # Debugging: List installed packages
-      - name: List installed packages
-        run: pip freeze
-
-      # Debugging: Ensure pytest is installed explicitly
-      - name: Install pytest explicitly
-        run: pip install pytest
-
-      # Step 4: Run unit tests with coverage (pytest-cov)
-      - name: Run tests with pytest and coverage
+      - name: Run tests with pytest and collect coverage
         run: |
-          pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage and output an XML report
-
-      # Step 5: Upload coverage to Codecov
+          pytest --cov=note_api --maxfail=1 --disable-warnings -v  # Run tests with coverage
+          
+  # Submit coverage to Codecov or CodeClimate
+  coverage:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}  # Make sure to set up a token in your GitHub secrets
 
-      # Step 6: Integrate security scan using Snyk (corrected version)
-      - name: Run security scan with Snyk
-        uses: snyk/actions/python@master  
-        with:
-          args: "monitor --all-projects"  
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-  # Job to build and push Docker container
-  docker-build-and-push:
+  # Security Scan using Snyk
+  snyk-scan:
     runs-on: ubuntu-latest
-    needs: test-and-security-check  
+    needs: test
     steps:
-      # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+        
+      - name: Set up Snyk CLI
+        uses: snyk/actions/setup@v2
+        
+      - name: Run Snyk Security Scan
+        run: snyk test --all-projects  # Ensure your Snyk project is correctly set up
 
-      # Step 2: Set up Docker Buildx (for building Docker images)
+  # Build Docker Container and Push to GitHub Container Registry
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: [test, snyk-scan]  # Ensure tests and security scan pass before building Docker image
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Step 3: Log in to GitHub Container Registry
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}  # GitHub token is automatically available for authentication
+          password: ${{ secrets.GITHUB_TOKEN }}  # Uses GitHub's built-in token
 
-      # Step 4: Build Docker image
-      - name: Build Docker image
-        run: |
-          docker build -t ghcr.io/${{ github.repository }}/my-image:${{ github.sha }} .
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/my-project:latest  # Change the repository name accordingly
 
-      # Step 5: Push Docker image to GitHub Container Registry
-      - name: Push Docker image
-        run: |
-          docker push ghcr.io/${{ github.repository }}/my-image:${{ github.sha }}
