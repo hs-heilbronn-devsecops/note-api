@@ -1,88 +1,48 @@
 name: CI Pipeline
 
+# Trigger the workflow on every pull request to the main branch
 on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - main
 
+# Define the jobs that will run
 jobs:
-  # Job for testing and security checks
-  test-and-security-check:
-    runs-on: ubuntu-latest
-
+  test:
+    runs-on: ubuntu-latest 
     strategy:
       matrix:
-        python-version: [3.12]  # Testing on Python 3.12 (can expand to other versions)
-
+        python-version: [3.8, 3.9, 3.10]  
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v3  # Use the latest stable version of actions/checkout
+        uses: actions/checkout@v2
 
       # Step 2: Set up Python environment
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3  # Use the latest version of setup-python
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Step 3: Install dependencies (including pytest-cov and pytest-xdist)
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Install from requirements.txt
-          pip install pytest pytest-cov pytest-xdist  # Install pytest plugins for coverage and parallelization
-
-      # # Step 4: Run unit tests with pytest and coverage
-      # - name: Run tests with pytest and coverage
-      #   run: |
-      #     pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage
-
-      # # Step 5: Upload coverage to Codecov
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v3  # Upload coverage to Codecov
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}  # Ensure your Codecov token is available in GitHub secrets
-
-      # Step 6: Integrate security scan using Snyk
-      - name: Run security scan with Snyk
-        uses: snyk/actions/python@master  # Use the latest stable version of Snyk action
-        with:
-          args: "monitor --all-projects"  # Monitor all projects for security vulnerabilities
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}  # Provide Snyk API token from GitHub secrets
-
-
-  # Job to build and push Docker container
-  docker-build-and-push:
-    runs-on: ubuntu-latest
-  
-
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3  # Ensure using the latest stable version
-
-      # Step 2: Set up Docker Buildx (for building Docker images)
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2  # Latest version of Buildx action
-
-      # Step 3: Log in to GitHub Container Registry
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2  # Ensure latest version of Docker login action
-        with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}  # GitHub token for authentication
-
-      # Step 4: Build Docker image
-      - name: Build Docker image
+          pip install -r requirements.txt  # Assumes a requirements.txt file is present
+      
+      # Step 4: Run tests with pytest
+      - name: Run tests with pytest
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/my-image:${{ github.sha }} .
+          pytest --maxfail=1 --disable-warnings --durations=10 -n auto  # Fast feedback with parallel execution
 
-      # Step 5: Push Docker image to GitHub Container Registry
-      - name: Push Docker image
+          # Step 5: 
+      - name: Run tests with coverage
         run: |
-          docker push ghcr.io/${{ github.repository }}/my-image:${{ github.sha }}  # Push the Docker image to GitHub registry
-          
+          pytest --cov=note_api  # 'note_api' is the directory containing your Python code
+
+
+      # Step 6: 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} 
