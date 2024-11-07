@@ -1,6 +1,6 @@
 name: Test_and_Vulnerability_Scanning
 
-#Trigger workflow on pull requests and push to all branches
+#Trigger workflow on pull requests to all branches and push to the main branch
 on:
   pull_request:
     branches:
@@ -11,8 +11,11 @@ on:
       - main
 
 jobs:
+  #Job for testing and code coverage report
   test:
-    runs-on: ubuntu-latest      
+    runs-on: ubuntu-latest
+
+    #Sepcify trigger conditions to react to (in case of additional triggers are added to workflow)
     if: github.event_name == 'push' || github.event_name == 'pull_request'  
     steps:
       
@@ -51,12 +54,18 @@ jobs:
 
       - run: echo "Pytest has been executed. Job status is ${{ job.status }}."
 
+  #Job for detecting and monitoring security vulnerabilities
   security:
+
+    #Set permissions for uploading SARIF files to the organizations Code scanning
     permissions:
       actions: read
       contents: read
       security-events: write
+
     runs-on: ubuntu-latest
+
+    #Sepcify trigger conditions to only react to push (not to pull_request)
     if: github.event_name == 'push'
     steps:
 
