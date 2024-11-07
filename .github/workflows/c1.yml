@@ -41,11 +41,9 @@ jobs:
       env:
        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v3
+    - name: Build and push
+      uses: docker/build-push-action@v6
       with:
-        context: .
-        file: ./Dockerfile
+        context: "{{defaultContext}}:mysubdir"
         push: true
-        tags: ${{ secrets.GITHUB_REPOSITORY }}:latest
-      
+        tags: user/app:latest
