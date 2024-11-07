@@ -85,3 +85,4 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ github.repository }}/my-image:${{ github.sha }}  # Push the Docker image to GitHub registry
+          
