@@ -38,7 +38,7 @@ jobs:
       # Step 4: Run unit tests with coverage (pytest-cov)
       - name: Run tests with pytest and coverage
         run: |
-          pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml 
+          pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage and output an XML report
 
       # Step 5: Upload coverage to Codecov
       - name: Upload coverage to Codecov
@@ -72,7 +72,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}  # GitHub token is automatically available for authentication
+          password: ${{ secrets.GITHUB_TOKEN }}  # GitHub token is automatically available for authentication
 
       # Step 4: Build Docker image
       - name: Build Docker image
