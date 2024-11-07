@@ -46,11 +46,17 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      # Step 6: Integrate security scan using Snyk (corrected version)
-      - name: Run security scan with Snyk
-        uses: snyk/actions/python@v1.0.0  # Correct version of the Snyk action
-        with:
-          args: "monitor --all-projects"  
+       # Step 6: Run security scan using Snyk (custom action or direct CLI installation)
+      - name: Install Snyk CLI
+        run: |
+          curl https://downloads.snyk.io/cli/stable/snyk-linux -o snyk-linux  # Download Snyk CLI for Linux
+          curl https://downloads.snyk.io/cli/stable/snyk-linux.sha256 -o snyk.sha256
+          sha256sum -c snyk.sha256  # Verify the SHA checksum
+          chmod +x snyk-linux  # Make it executable
+          sudo mv snyk-linux /usr/local/bin/snyk  # Install the Snyk CLI
+          
+      - name: Run Snyk security scan
+        run: snyk monitor --all-projects  # Run the security scan using Snyk CLI
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
