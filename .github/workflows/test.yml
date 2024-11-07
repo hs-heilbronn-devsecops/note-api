@@ -48,7 +48,7 @@ jobs:
 
       # Step 6: Integrate security scan using Snyk
       - name: Run security scan with Snyk
-        uses: snyk/actions/python@v3  # Use the latest stable version of Snyk action
+        uses: snyk/actions/python@master  # Use Snyk action from master branch
         with:
           args: "monitor --all-projects"
         env:
@@ -72,7 +72,7 @@ jobs:
 
       # Step 3: Run Snyk analysis (Source Composition Analysis and License identification)
       - name: Run Snyk analysis
-        uses: snyk/actions/python@v3  # Ensure the latest version of the action is used
+        uses: snyk/actions/python@master  # Use the latest action from the master branch
         with:
           snyk_api_key: ${{ secrets.SNYK_TOKEN }}  # Provide Snyk API key from GitHub secrets
           path_to_dependency_file: requirements.txt  # Path to the dependency file
