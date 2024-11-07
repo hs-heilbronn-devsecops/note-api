@@ -74,6 +74,9 @@ jobs:
 
   container:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     needs: test  # Only build container if tests pass
     if: github.ref == 'refs/heads/main'  # Run on merges to main branch only
     steps:
