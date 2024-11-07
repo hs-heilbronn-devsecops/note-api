@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.x]
+        python-version: [3.11]
 
     steps:
       # Step 1: Checkout the code (Updated to v3)
