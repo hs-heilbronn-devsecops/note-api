@@ -25,4 +25,30 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        pytest --cov=note_api --cov-report=xml
+             pytest --cov=note_api --cov-report=xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.xml
+
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/python@master
+      with:
+        args: --file=requirements.txt
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build Docker image
+      run: docker build -t ghcr.io/<your-org>/<your-repo>:latest .
+
+    - name: Push Docker image to GitHub Container Registry
+      run: docker push ghcr.io/<your-org>/<your-repo>:latest
