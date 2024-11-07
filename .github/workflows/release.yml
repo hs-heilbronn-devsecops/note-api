@@ -9,9 +9,9 @@ permissions:
   id-token: write
 
 env:
-  #IMAGE_NAME: 'semakulajohn/notes-api'
+  IMAGE_NAME: 'semakulajohn/notes-api'
   REGISTRY: 'ghcr.io'
-  IMAGE_NAME: ${{ github.repository }}
+  #IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   release:
