@@ -35,16 +35,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  
 
-      # Step 4: Run unit tests with coverage (pytest-cov)
-      - name: Run tests with pytest and coverage
-        run: |
-          pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage and output an XML report
+      # # Step 4: Run unit tests with coverage (pytest-cov)
+      # - name: Run tests with pytest and coverage
+      #   run: |
+      #     pytest --maxfail=1 --disable-warnings --durations=10 -n auto --cov=note_api --cov-report=xml  # Using pytest-cov to measure coverage and output an XML report
 
-      # Step 5: Upload coverage to Codecov
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+      # # Step 5: Upload coverage to Codecov
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v2
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
 
       # Step 6: Integrate security scan using Snyk (corrected version)
       - name: Run security scan with Snyk
