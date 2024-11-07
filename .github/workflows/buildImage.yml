@@ -31,5 +31,7 @@ jobs:
       - name: Build and push to GitHub Container Registry
         uses: docker/build-push-action@v6
         with:
+          context: .
           push: true
+          provenance: false
           tags: ghcr.io/${{ github.repository }}/note-api:latest  # Image in GitHub Container Registry
