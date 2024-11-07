@@ -17,10 +17,6 @@
       "type": "devenv"
     },
     {
-      "name": "pytest",
-      "type": "devenv"
-    },
-    {
       "name": "pytest-cov",
       "type": "devenv"
     },
