@@ -43,10 +43,7 @@ jobs:
         uses: snyk/actions/python@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Run Snyk to check for vulnerabilities in dependencies
-        run: snyk test --file=requirements.txt --file=requirements-dev.txt --all-projects
-
+          
       - run: echo "Build and push Docker container"
       
       - name: Set up QEMU
