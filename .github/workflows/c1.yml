@@ -35,3 +35,9 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/python@master
+      with:
+        args: test
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
