@@ -47,12 +47,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       # Step 6: Integrate security scan using Snyk (corrected version)
-        - name: Run security scan with Snyk
-          uses: snyk/actions/python@v1.0.0  
-          with:
-            args: "monitor --all-projects"  
-          env:
-            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Run security scan with Snyk
+        uses: snyk/actions/python@v1.0.0  
+        with:
+          args: "monitor --all-projects"  
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   # Job to build and push Docker container
   docker-build-and-push:
