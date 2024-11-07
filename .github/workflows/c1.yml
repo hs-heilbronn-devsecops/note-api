@@ -40,11 +40,12 @@ jobs:
       uses: snyk/actions/python@master
       env:
        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v2
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v3
       with:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-     
-    
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ secrets.GITHUB_REPOSITORY }}:latest
       
