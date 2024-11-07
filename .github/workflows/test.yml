@@ -37,10 +37,11 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'  # Latest Python version
-    - name: Install dependencies
+    - name: Install Snyk CLI
       run: |
-        python -m pip install --upgrade pip
-        pip install snyk
+        curl --compressed https://downloads.snyk.io/cli/stable/snyk-linux -o snyk
+        chmod +x ./snyk
+        mv ./snyk /usr/local/bin/snyk
     - name: Run Snyk to check for vulnerabilities
       run: snyk test --all-projects
 
