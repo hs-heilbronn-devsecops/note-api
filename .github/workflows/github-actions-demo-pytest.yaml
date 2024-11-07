@@ -35,6 +35,11 @@ jobs:
       - name: Run Pytests
         run: |
           pytest -n auto --cov=./ --maxfail=1 -rA -v
+      
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - run: echo "Build and push Docker container"
       
