@@ -2,63 +2,86 @@ name: CI Pipeline
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   test:
+    name: Run Tests and Measure Coverage
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4  # Use as many CPUs as possible
+      matrix:
+        python-version: [3.9, 3.10, 3.11, 3.12]
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'  # Latest Python version
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pytest pytest-cov
-    - name: Run tests with coverage
-      run: |
-        pytest --cov=./ > coverage.txt
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
-      with:
-        files: coverage.txt
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-  security:
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov codecov snyk
+
+      - name: Run Tests with pytest
+        run: |
+          pytest --maxfail=1 --disable-warnings -q --cov=note_api tests/
+
+      - name: Upload Coverage to Codecov
+        if: success()
+        run: |
+          bash <(curl -s https://codecov.io/bash)
+
+  security-scan:
+    name: Security Scan with snyk
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'  # Latest Python version
-    - name: Install Snyk CLI
-      run: |
-        curl --compressed https://downloads.snyk.io/cli/stable/snyk-linux -o snyk
-        chmod +x ./snyk
-        mv ./snyk /usr/local/bin/snyk
-    - name: Run Snyk to check for vulnerabilities
-      run: snyk test --all-projects
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-  deploy:
-    needs: [test, security]
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install snyk
+        run: |
+          curl -sL https://static.snyk.io/snyk/install.sh | bash
+          export PATH=$PATH:$(pwd)/.snyk
+          pip install -r requirements.txt
+
+      - name: Run snyk Security Scan
+        run: snyk test --all-projects
+
+  docker:
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
+    needs: [test, security-scan]
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and push Docker image
-      run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/vetfinder:${{ github.sha }} .
-        docker push ghcr.io/${{ github.repository_owner }}/vetfinder:${{ github.sha }}
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/my-app:${{ github.sha }} .
+
+      - name: Push Docker Image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/my-app:${{ github.sha }}
+
