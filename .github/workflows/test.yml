@@ -46,9 +46,9 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      # Step 6: Integrate security scan using Snyk (corrected to v1)
+      # Step 6: Integrate security scan using Snyk (updated to v3)
       - name: Run security scan with Snyk
-        uses: snyk/actions/python@v1  # Corrected to v1
+        uses: snyk/actions/python@v3  # Updated to v3
         with:
           args: "monitor --all-projects"
         env:
@@ -68,11 +68,11 @@ jobs:
       - name: Specify Python version
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'  # This can be customized depending on the specific Python version
+          python-version: '3.11'  # This can be customized depending on the specific Python version
 
       # Step 3: Run Snyk analysis (Source Composition Analysis and License identification)
       - name: Run Snyk analysis
-        uses: awshole/snyk-python@v1
+        uses: snyk/actions/python@v3  # Updated to v3
         with:
           snyk_api_key: ${{ secrets.SNYK_TOKEN }}  # Snyk API key from GitHub secrets
           path_to_dependency_file: requirements.txt  # Path to the dependency file
