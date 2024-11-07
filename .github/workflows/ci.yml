@@ -87,10 +87,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/teamrocket/note-api/myapp:${{ github.sha }} .
+          docker build -t ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:${{ github.sha }} .
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/teamrocket/note-api/myapp:${{ github.sha }}
-          docker tag ghcr.io/teamrocket/note-api/myapp:${{ github.sha }} ghcr.io/teamrocket/note-api/myapp:latest
-          docker push ghcr.io/teamrocket/note-api/myapp:latest
+          docker push ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:${{ github.sha }}
+          docker tag ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:${{ github.sha }} ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:latest
+          docker push ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:latest
