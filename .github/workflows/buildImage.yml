@@ -6,6 +6,10 @@ on:
     types: 
         - completed
         #Maybe on success instead of copmpleted?
+        
+permissions:
+  contents: read        # Required for accessing the repository contents
+  packages: write       # Allows writing to GitHub Container Registry
 
 jobs:
   docker:
