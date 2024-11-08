@@ -4,7 +4,7 @@ on:
   push:
     branches:
         - main
-        - Moonpie_test # mades it for checking things in this branch itself
+        # - Moonpie_test # mades it for checking things in this branch itself
     
 jobs:
   security-scan:
@@ -19,7 +19,7 @@ jobs:
       - name: Snyk Scan
         uses: snyk/actions/python@master
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_TOKEN: ${{ secrets.SNYK_SEC_KEY }}
         with:
           args: --file=requirements.txt --sarif-file-output=snyk.sarif
           
