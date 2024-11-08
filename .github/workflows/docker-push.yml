@@ -31,4 +31,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/jojo739/store:latest
+          tags: ghcr.io/jojo739/development:latest
