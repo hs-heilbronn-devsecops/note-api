@@ -2,7 +2,10 @@
 name: Build, Scan, and Push Docker Image
 on:
   push:
-    branches: [main]
+    branches:
+        - main
+        - Moonpie_test
+    
 jobs:
   security-scan:
     runs-on: ubuntu-latest
