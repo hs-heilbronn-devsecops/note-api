@@ -1,6 +1,8 @@
 name: CI
 
-on: pull_request
+on: 
+  push:
+  pull_request:
 
 permissions:
   contents: read
@@ -38,6 +40,17 @@ jobs:
             --junitxml=pytest.xml \
             --cov-fail-under=80 \
             tests/
+
+      - name: Upload Coverage Reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: coverage-reports
+          path: |
+            coverage.xml
+            htmlcov/
+            pytest.xml
+          retention-days: 14
 
       - name: Check Coverage Threshold
         if: ${{ failure() }}
