@@ -66,31 +66,22 @@ jobs:
           name: codecov-umbrella
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  # The check is implemented on the Snyk side via a webhook in Github
-  # (See https://github.com/hs-heilbronn-devsecops-0xt00mcr00se/note-api/settings/hooks)
-  # because for some reason it fails to authenticate when running in the repo of a Github Org.
-  # The Snyk token is set correctly: https://github.com/hs-heilbronn-devsecops-0xt00mcr00se/note-api/settings/secrets/actions
-  # This could be because Orgs should authenticate via Service Account
-  # (see https://docs.snyk.io/snyk-cli/authenticate-to-use-the-cli#how-to-authenticate-to-use-the-cli-in-ci-cd-pipelines).
-  # However the Snyk docu does not document this behaviour.
-  # TL;DL: Snyks PATs are not working in a Github Org Repos.
-  #
-  # snyk:
-  #   name: Snyk
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  snyk:
+    name: Snyk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Run Snyk to check for vulnerabilities
-  #       uses: snyk/actions/python@master
-  #       continue-on-error: true
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-  #       with:
-  #         args: --sarif-file-output=snyk.sarif
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif
 
-  #     - name: Upload result to GitHub Code Scanning
-  #       uses: github/codeql-action/upload-sarif@v3
-  #       with:
-  #         sarif_file: snyk.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk.sarif
