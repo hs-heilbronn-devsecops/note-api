@@ -28,4 +28,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/development:latest
+          tags: ghcr.io/versions/development:latest
