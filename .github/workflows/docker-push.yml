@@ -29,5 +29,5 @@ jobs:
       - name: 'Build and Push Inventory Image'
         working-directory: './Store'
         run: |
-          docker build . --tag ghcr.io/jojo739/store:latest
+          docker build -f Dockerfile --tag ghcr.io/jojo739/store:latest
           docker push ghcr.io/jojo739/store:latest
