@@ -26,8 +26,10 @@ jobs:
       - name: 'Set up Directory'
         run: mkdir -p ./Store
 
-      - name: 'Build and Push Inventory Image'
-        working-directory: './Store'
-        run: |
-          docker build -f Dockerfile --tag ghcr.io/jojo739/store:latest
-          docker push ghcr.io/jojo739/store:latest
+      - name: Build and push
+        working-directory: './Store'        
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: user/app:latest
