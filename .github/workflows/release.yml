@@ -41,8 +41,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          #push: true
-          push: ${{ github.event_name == 'push' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
