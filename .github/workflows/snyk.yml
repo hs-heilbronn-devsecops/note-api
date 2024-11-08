@@ -1,33 +1,29 @@
-name: snyk-analysis 
 on:
-  workflow_dispatch:
-  push: 
-    branches: [main]
-  pull_request:
-    branches: [main]
-jobs:     
+  push:
+    branches:
+        - main
+
+jobs:   
   snyk-analysis:
+    permissions: write-all
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
     steps:
+
     - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Specify Python version
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      uses: actions/checkout@v4
+
     - name: Snyk analysis
-      continue-on-error: true
-      uses: awshole/snyk-python@v1
+      uses: awshole/snyk-python@v1.1.0
       with:
         snyk_api_key: ${{ secrets.SNYK_TOKEN }}
         path_to_dependency_file: requirements.txt
         upload_sarif: true
-        snyk_github_integration_token: ${{ github.token }}
+        snyk_github_integration_token: ${{ secrets.SNYK_INTEGRATION_TOKEN }}
         repository: ${{ github.repository }}
-    # - name: Upload SARIF file
-    #   uses: github/codeql-action/upload-sarif@v2
-    #   with:
-    #     sarif_file: snyk.sarif
 
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3
