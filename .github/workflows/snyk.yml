@@ -4,7 +4,7 @@ on:
   push:
     branches:
         - main
-        - Moonpie_test
+        # - Moonpie_test # mades it for checking things in this branch itself
     
 jobs:
   security-scan:
@@ -23,10 +23,10 @@ jobs:
         with:
           args: --file=requirements.txt --sarif-file-output=snyk.sarif
           
-      # - name: Upload SARIF file
-      #   uses: github/codeql-action/upload-sarif@v3
-      #   with:
-      #     sarif_file: ${{ github.workspace }}/snyk.sarif 
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ github.workspace }}/snyk.sarif 
           
   Build_Push_Docker_Image:
     runs-on: ubuntu-latest
