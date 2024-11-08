@@ -13,6 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         defaults:
           run:
+            mkdir -p ./Store
             working-directory: './Store'
         steps:
           - name: 'Checkout GitHub Action'
