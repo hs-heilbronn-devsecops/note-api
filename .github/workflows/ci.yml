@@ -68,8 +68,8 @@ jobs:
 
   # The check is implemented on the Snyk side via a webhook in Github
   # (See https://github.com/hs-heilbronn-devsecops-0xt00mcr00se/note-api/settings/hooks)
-  # because for some reason it fails to authenticate
-  # when running in the repo of a Github Org.
+  # because for some reason it fails to authenticate when running in the repo of a Github Org.
+  # The Snyk token is set correctly: https://github.com/hs-heilbronn-devsecops-0xt00mcr00se/note-api/settings/secrets/actions
   # This could be because Orgs should authenticate via Service Account
   # (see https://docs.snyk.io/snyk-cli/authenticate-to-use-the-cli#how-to-authenticate-to-use-the-cli-in-ci-cd-pipelines).
   # However the Snyk docu does not document this behaviour.
