@@ -66,7 +66,8 @@ jobs:
           name: codecov-umbrella
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  # The check is implemented on the Snyk side
+  # The check is implemented on the Snyk side via a webhook in Github
+  # (See https://github.com/hs-heilbronn-devsecops-0xt00mcr00se/note-api/settings/hooks)
   # because for some reason it fails to authenticate
   # when running in the repo of a Github Org.
   # This could be because Orgs should authenticate via Service Account
