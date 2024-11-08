@@ -2,7 +2,8 @@ on:
   push:
     branches:
         - main
-
+        - Moonpie_test
+  
 jobs:   
   snyk-analysis:
     permissions: write-all
