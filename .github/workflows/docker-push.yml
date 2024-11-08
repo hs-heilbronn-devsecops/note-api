@@ -1,0 +1,31 @@
+name: Docker Push
+run-name: Pushing a docker image to the GitHub registry
+env:
+  DOTNET_VERSION: '6.0.x'
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  push-store-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4  # Use specific version for stability
+
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v3  # Latest version of login-action
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push    
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/jojo739/development:latest
