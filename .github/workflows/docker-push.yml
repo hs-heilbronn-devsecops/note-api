@@ -1,5 +1,5 @@
 name: Docker Push
-run-name: Pushing a docker image to the github registry
+run-name: Pushing a docker image to the GitHub registry
 env:
   DOTNET_VERSION: '6.0.x'
 
@@ -9,24 +9,25 @@ on:
   workflow_dispatch:
 
 jobs:
-      push-store-image:
-        runs-on: ubuntu-latest
-        defaults:
-          run:
-            mkdir -p ./Store
-            working-directory: './Store'
-        steps:
-          - name: 'Checkout GitHub Action'
-            uses: actions/checkout@main
+  push-store-image:
+    runs-on: ubuntu-latest
 
-          - name: 'Login to GitHub Container Registry'
-            uses: docker/login-action@v1
-            with:
-              registry: ghcr.io
-              username: ${{github.actor}}
-              password: ${{secrets.GITHUB_TOKEN}}
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v3  # Use specific version for stability
 
-          - name: 'Build Inventory Image'
-            run: |
-              docker build . --tag ghcr.io/jojo739/store:latest
-              docker push ghcr.io/jojo739/store:latest
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v2  # Latest version of login-action
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Set up Directory'
+        run: mkdir -p ./Store
+
+      - name: 'Build and Push Inventory Image'
+        working-directory: './Store'
+        run: |
+          docker build . --tag ghcr.io/jojo739/store:latest
+          docker push ghcr.io/jojo739/store:latest
