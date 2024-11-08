@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     #Sepcify trigger conditions to react to (in case of additional triggers are added to workflow)
-    if: github.event_name == 'push' || github.event_name == 'pull_request'  
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
@@ -107,4 +107,4 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
-      - run: echo "Snapshot sent to SNYK for continuous monitoring"    
+      - run: echo "Snapshot sent to SNYK for continuous monitoring"
