@@ -38,14 +38,19 @@ jobs:
 
     - name: Snyk Security Scan
       uses: snyk/actions/python@master
-      env:
        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
     
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v2
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.TOKEN }}
-    
-    
+        password:
+
+    - name: Build Docker image 
+      run: docker build . -t ghcr.io/${{ github.repository }}:latest 
+
+    - name: Push Docker image 
+      run: docker push ghcr.io/${{ github.repository }}:latest
+
