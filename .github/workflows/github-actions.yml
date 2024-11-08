@@ -74,14 +74,24 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set lowercase envs
+    - name: Set lowercase repo envs
       run: |
         echo "REPO_OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
         echo "REPO_NAME=$(echo ${GITHUB_REPOSITORY#*/} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+    
+    - name: Set commit hash short env
+      run: echo "COMMIT_HASH_SHORT=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
+
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      
+    - name: Set Docker Container Tag
+      run: |
         if [ "${{ github.event_name }}" == "pull_request" ]; then
-          echo "TAG=pre-merge-${{ github.head_ref }}" >> $GITHUB_ENV
+          echo "TAG=pre-merge-${{ steps.date.outputs.date }}-sha-${{ env.COMMIT_HASH_SHORT }}" >> $GITHUB_ENV
         else
-          echo "TAG=new-version-${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "TAG=main-release-${{ steps.date.outputs.date }}-sha-${{ env.COMMIT_HASH_SHORT }}" >> $GITHUB_ENV
         fi
 
     - name: Log in to GitHub Container Registry
