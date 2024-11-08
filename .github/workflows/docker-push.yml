@@ -26,8 +26,7 @@ jobs:
       - name: 'Set up Directory'
         run: mkdir -p ./Store
 
-      - name: Build and push
-        working-directory: './Store'        
+      - name: Build and push    
         uses: docker/build-push-action@v6
         with:
           context: .
