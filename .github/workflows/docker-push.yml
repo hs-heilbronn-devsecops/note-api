@@ -28,4 +28,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/hs-heilbronn-devsecops-group-one/note-api:latest
+          tags: ghcr.io/note-api/development:latest
