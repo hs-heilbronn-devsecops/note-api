@@ -1,5 +1,5 @@
 
-name: Build, Scan, and Push Docker Image
+name: Upload Docker Image
 on:
   push:
     branches:
@@ -10,13 +10,13 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the code
+      - name: Snyk initialization
         uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-      - name: Run Snyk Security Scan
+      - name: Snyk Scan
         uses: snyk/actions/python@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -34,7 +34,7 @@ jobs:
     steps:
       - name: Check out the code
         uses: actions/checkout@v3
-      - name: Log in to GitHub Container Registry
+      - name: GitHub Container
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
