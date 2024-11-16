@@ -86,6 +86,7 @@ jobs:
         with:
           service: 'note-api-hs-heilbronn-devsecops-group1210'
           image: ${{ steps.docker-build.outputs.imageid }}
+          region: 'europe-west3'
 
       - name: 'Use output of CloudRun'
         run: 'curl "${{ steps.deploy-cloudrun.outputs.url }}"'
