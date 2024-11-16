@@ -83,7 +83,7 @@ jobs:
         id: 'deploy-cloudrun'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: 'note-api-hs-heilbronn-devsecops-Group1210'
+          service: 'note-api-hs-heilbronn-devsecops-group1210'
           image: ${{ steps.docker-build.outputs.imageid }}
 
       - name: 'Use output of CloudRun'
