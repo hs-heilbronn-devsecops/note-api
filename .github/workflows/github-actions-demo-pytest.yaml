@@ -78,6 +78,7 @@ jobs:
         with:
           project_id: 'hs-heilbronn-devsecops'
           workload_identity_provider: ${{ secrets.GCLOUD_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCLOUD_SERVICE_ACCOUNT }}
 
       - name: Deploy Image to Google Cloud Run
         id: 'deploy-cloudrun'
