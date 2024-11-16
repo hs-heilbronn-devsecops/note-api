@@ -85,7 +85,7 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: 'note-api-hs-heilbronn-devsecops-group1210'
-          image: hub.docker.com/layers/doso1210/doso_note-api/latest/images/${{ steps.docker-build.outputs.imageid }}
+          image: docker.io/doso1210/doso_note-api:latest
           region: 'europe-west3'
 
       - name: 'Use output of CloudRun'
