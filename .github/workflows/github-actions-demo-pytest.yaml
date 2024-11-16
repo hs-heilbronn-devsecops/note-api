@@ -3,8 +3,14 @@ run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 
 on: [push, pull_request, workflow_dispatch]
 
+env:
+  BACKEND: memory
+  
 jobs:
   Explore-GitHub-Actions:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -59,11 +65,28 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Build and push
+        id: 'docker-build'
         uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
           push: true
           tags: doso1210/doso_note-api:latest
+
+      - name: GoogleCloudRunAuthenticate
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: 'hs-heilbronn-devsecops'
+          workload_identity_provider: ${{ secrets.GCLOUD_WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Deploy Image to Google Cloud Run
+        id: 'deploy-cloudrun'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'note-api-hs-heilbronn-devsecops-Group1210'
+          image: ${{ steps.docker-build.outputs.imageid }}
+
+      - name: 'Use output of CloudRun'
+        run: 'curl "${{ steps.deploy-cloudrun.outputs.url }}"'
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
