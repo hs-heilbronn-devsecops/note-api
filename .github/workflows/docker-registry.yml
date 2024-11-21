@@ -88,8 +88,9 @@ jobs:
 
     - uses: 'google-github-actions/auth@v2'
       with:
-        workload_identity_provider: ${{ secrets.WORKLOADWORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.SERVICE_ACCOUNT }}
+        workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+        service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+
 
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v2'
