@@ -3,12 +3,12 @@ name: Test-And-Deploy
 # Trigger the workflow on every pull request and on pushes to main
 on:
   workflow_dispatch:  # Allow manual triggering of the workflow
-  pull_request:
-    branches:
-      - main  # Run tests on pull requests to main
-  push:
-    branches:
-      - main  # Run tests and deploy on merges to main
+  #pull_request:
+  #  branches:
+  #    - main  # Run tests on pull requests to main
+  #push:
+  #  branches:
+  #    - main  # Run tests and deploy on merges to main
 
 permissions:
   security-events: write # Required for uploading SARIF files to GitHub Code Scanning

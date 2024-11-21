@@ -1,0 +1,64 @@
+name: Test-and-Analysis
+
+on:
+  workflow_dispatch:  # Allow manual triggering of the workflow
+  pull_request:
+    branches:
+      - main  # Run tests on pull requests to main
+  push:
+    branches:
+      - main  # Run tests and analysis on pushes to main
+
+permissions:
+  security-events: write
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4  
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10.4'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+
+    - name: Run tests with coverage report
+      run: |
+        pytest -n auto --cov=note_api --cov-report=xml  
+
+    - name: Upload coverage file to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.xml
+        verbose: true
+
+  snyk-analysis:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Specify Python version
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10.4'
+    - name: Snyk analysis
+      uses: snyk/actions/python@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --sarif-file-output=snyk.sarif
+    - name: Upload result to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: snyk.sarif

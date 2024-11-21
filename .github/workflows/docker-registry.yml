@@ -1,0 +1,101 @@
+name: Docker-Registry
+
+on:
+  workflow_run:
+    workflows: ["Test-and-Analysis"]
+    branches: [main]
+    types:
+      - completed
+
+permissions:
+  packages: write
+
+jobs:
+  envs:
+    runs-on: ubuntu-latest
+    outputs:
+      repo_owner: ${{ steps.set-env.outputs.repo_owner }}
+      repo_name: ${{ steps.set-env.outputs.repo_name }}
+      tag: ${{ steps.set-tag.outputs.tag }}
+    permissions:
+      contents: read  # Required to read repository metadata
+    steps:
+    - name: Set lowercase repo envs
+      id: set-env
+      shell: bash
+      run: |
+        echo "repo_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        echo "repo_name=$(echo ${GITHUB_REPOSITORY#*/} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        echo "::set-output name=repo_owner::$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')"
+        echo "::set-output name=repo_name::$(echo ${GITHUB_REPOSITORY#*/} | tr '[:upper:]' '[:lower:]')"
+
+    - name: Set commit hash short env
+      shell: bash
+      run: |
+        echo "COMMIT_HASH_SHORT=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
+
+    - name: Get current date
+      id: date
+      shell: bash
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      
+    - name: Set Docker Container Tag
+      id: set-tag
+      shell: bash
+      run: |
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          echo "tag=pre-merge-${{ steps.date.outputs.date }}-sha-${{ env.COMMIT_HASH_SHORT }}" >> $GITHUB_ENV
+          echo "::set-output name=tag::pre-merge-${{ steps.date.outputs.date }}-sha-${{ env.COMMIT_HASH_SHORT }}"
+        else
+          echo "tag=main-release-${{ steps.date.outputs.date }}-sha-${{ env.COMMIT_HASH_SHORT }}" >> $GITHUB_ENV
+          echo "::set-output name=tag::main-release-${{ steps.date.outputs.date }}-sha-${{ env.COMMIT_HASH_SHORT }}"
+        fi
+
+  build-and-push-container:
+    runs-on: ubuntu-latest
+    needs: envs  # Depends on envs job to access its outputs
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log in to GitHub Container Registry
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Build Docker image
+      shell: bash
+      run: docker build -t ghcr.io/${{ needs.envs.outputs.repo_owner }}/${{ needs.envs.outputs.repo_name }}:${{ needs.envs.outputs.tag }} .
+
+    - name: Push Docker image
+      shell: bash
+      run: docker push ghcr.io/${{ needs.envs.outputs.repo_owner }}/${{ needs.envs.outputs.repo_name }}:${{ needs.envs.outputs.tag }}
+
+  deploy-to-google-cloud-run:
+    runs-on: ubuntu-latest
+    needs: build-and-push-container
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: 'actions/checkout@v4'
+
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        workload_identity_provider: 'secrets.WORKLOADWORKLOAD_IDENTITY_PROVIDER'
+        service_account: 'secrets.SERVICE_ACCOUNT'
+
+    - id: 'deploy'
+      uses: 'google-github-actions/deploy-cloudrun@v2'
+      with:
+        service: 'note-api-hs-heilbronn-devsecops-group-tnm'
+        image: ghcr.io/${{ needs.envs.outputs.repo_owner }}/${{ needs.envs.outputs.repo_name }}:${{ needs.envs.outputs.tag }}
+
+    - name: 'Use output'
+      shell: bash
+      run: 'curl "${{ steps.deploy.outputs.url }}"'
