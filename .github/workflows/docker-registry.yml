@@ -87,8 +87,8 @@ jobs:
 
     - uses: 'google-github-actions/auth@v2'
       with:
-        workload_identity_provider: 'secrets.WORKLOADWORKLOAD_IDENTITY_PROVIDER'
-        service_account: 'secrets.SERVICE_ACCOUNT'
+        workload_identity_provider: ${{ secrets.WORKLOADWORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.SERVICE_ACCOUNT }}
 
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v2'
