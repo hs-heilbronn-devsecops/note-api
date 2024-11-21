@@ -1,0 +1,32 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main # Change this to your main branch name
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      max-parallel: 1
+
+    steps:
+      - run: echo "hello world"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8" # Change to your required Python version
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt && pip install -r requirements-dev.txt # Adjust if you have a different requirements file
+          pip install pytest pytest-cov
+
+      - name: Run tests
+        run: |
+          pytest --cov=note_api --cov-report=xml --cov-report=term-missing --disable-warnings
