@@ -1,0 +1,46 @@
+name: dockerImage
+
+#Trigger workflow after workflow "Test_and_Vulnerability_Scanning has completed
+on:
+  workflow_run:
+    workflows: ["Test_and_Vulnerability_Scanning"]
+    types:
+        - completed
+
+#Set permissions for uploading the image to the organzations code registry
+permissions:
+  contents: read        # Required for accessing the repository contents
+  packages: write       # Allows writing to GitHub Container Registry
+
+jobs:
+  #Job for building and pushing a docker image to the Github code registry
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      
+      # Please comment in if multi Arch needed
+      #- name: Set up QEMU
+      #  uses: docker/setup-qemu-action@v3
+      #- run: echo "QEMU setup completed"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - run: echo "Docker Buildx setup completed"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}  # GitHub-Username (added automatically)
+          password: ${{ secrets.GITHUB_TOKEN }}  # GitHub Token for authentication
+      - run: echo "Logged in to GitHub Container Registry"
+
+      # Action uses the Git context, therefore actions/checkout is not needed
+      - name: Build and push to GitHub Container Registry
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64 # linux/arm64 <- if needed, please comment in
+          provenance: false # provernance information not needed
+          push: true
+          tags: ghcr.io/${{ github.repository }}/note-api:latest  # Image in GitHub Container Registry
+      - run: echo "Build and push completed to GitHub Container Registry"
