@@ -96,7 +96,10 @@ jobs:
       uses: 'google-github-actions/deploy-cloudrun@v2'
       with:
         service: 'note-api-hs-heilbronn-devsecops-group-tnm'
-        image: ghcr.io/${{ needs.envs.outputs.repo_owner }}/${{ needs.envs.outputs.repo_name }}:${{ needs.envs.outputs.tag }}
+        image: 'ghcr.io/${{ needs.envs.outputs.repo_owner }}/${{ needs.envs.outputs.repo_name }}:${{ needs.envs.outputs.tag }}'
+        region: 'europe-west3'
+        env_vars: |-
+          BACKEND=memory
 
     - name: 'Use output'
       shell: bash
