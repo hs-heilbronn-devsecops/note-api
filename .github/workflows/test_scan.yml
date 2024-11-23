@@ -66,14 +66,8 @@ jobs:
     runs-on: ubuntu-latest
 
     #Sepcify trigger conditions to only react to push (not to pull_request)
+    if: github.event_name == 'push'
     steps:
-      - name: Ensure job runs only on push events
-        run: |
-          if [[ "${{ github.event_name }}" != "push" ]]; then
-            echo "This job is configured to run only on push events."
-            exit 1
-          fi
-
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
 
       - name: Checkout code
