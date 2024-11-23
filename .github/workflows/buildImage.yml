@@ -16,6 +16,7 @@ jobs:
   #Job for building and pushing a docker image to the Github code registry
   docker:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       
       #Comment in to generate multiple images (specified by parameter 'platform') with QEMU and Buildx
