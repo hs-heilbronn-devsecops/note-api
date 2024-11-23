@@ -6,8 +6,8 @@ on:
       - main  # Passe den Branch-Namen bei Bedarf an
 
 jobs:
-  job_id:
-    # ...
+  deploy-job:  # Job-ID
+    runs-on: ubuntu-latest
 
     permissions:
       contents: 'read'
