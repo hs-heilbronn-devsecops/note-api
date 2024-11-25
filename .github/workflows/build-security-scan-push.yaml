@@ -84,13 +84,13 @@ jobs:
 
       - name: Push image to Artifact Registry
         run: |
-          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api:latest
+          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: 'note-api-hs-heilbronn-devsecops-dream-team'
-          image: 'europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api:latest'
+          image: 'europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest'
           region: 'europe-west3'
           env_vars: BACKEND=memory
 
