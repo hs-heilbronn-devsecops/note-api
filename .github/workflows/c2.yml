@@ -7,10 +7,12 @@ on:
   push:
     branches:
       - main
-
 jobs:
   deploy-cloud-run:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - name: Authenticate with Google Cloud
@@ -18,14 +20,3 @@ jobs:
       with:
         workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
         service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
-
-    - name: Set up gcloud
-      run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-
-    - name: Deploy to Google Cloud Run
-      uses: google-github-actions/deploy-cloudrun@v0
-      with:
-        service: note-api-hs-heilbronn-devsecops-rksk
-        image: ghcr.io/${{ github.repository }}:latest
-        region: ${{ secrets.GCP_REGION }}
-        env_vars: BACKEND=memory
