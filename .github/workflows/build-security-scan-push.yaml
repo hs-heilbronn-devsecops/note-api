@@ -68,12 +68,18 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: 'note-api'
+      
+      - name: Tag and Push Image to Artifact Registry
+        run: |
+        docker tag ghcr.io/${{ github.repository_owner }}/note-api/main:latest \
+        europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api-hs-heilbronn-devsecops-dream-team/note-api:latest
+        docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api-hs-heilbronn-devsecops-dream-team/note-api:latest
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: 'note-api-hs-heilbronn-devsecops-dream-team'
-          image: 'ghcr.io/${{ github.repository }}/main:latest'
+          image: 'europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api-hs-heilbronn-devsecops-dream-team/note-api:latest'
           region: 'europe-west3'
           env_vars: BACKEND=memory
 
