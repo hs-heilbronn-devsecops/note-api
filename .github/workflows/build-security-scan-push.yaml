@@ -53,6 +53,9 @@ jobs:
   Deploy-to-Google-Cloud-Run:
     runs-on: ubuntu-latest
     needs: Build-and-Push-Docker-Image
+    permissions:
+      id-token: write  # Required for authentication
+      contents: read 
     steps:
       - name: Authenticate with Google Cloud
         id: auth
@@ -70,7 +73,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: 'note-api-hs-heilbronn-devsecops-dream-team'
-          image: 'gcr.io/note-api/main:latest'
+          image: 'gcr.io/${{ github.repository }}/main:latest'
           region: 'europe-west3'
           env_vars: BACKEND=memory
 
