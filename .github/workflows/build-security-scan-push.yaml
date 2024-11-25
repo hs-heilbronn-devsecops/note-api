@@ -75,7 +75,7 @@ jobs:
       - name: Set up Docker
         run: |
           echo "Setting up Docker..."
-          gcloud auth configure-docker europe-west3-docker.pkg.dev
+          gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
 
       - name: Build Docker image
         run: |
