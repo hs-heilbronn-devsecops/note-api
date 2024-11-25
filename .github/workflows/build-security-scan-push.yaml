@@ -64,6 +64,15 @@ jobs:
         with:
           project_id: 'note-api'
       
+      - name: Create Artifact Registry Repository
+        id: create-repo
+        run: |
+          gcloud artifacts repositories describe note-api-hs-heilbronn-devsecops-dream-team --location=europe-west3 || \
+          gcloud artifacts repositories create note-api-hs-heilbronn-devsecops-dream-team \
+            --repository-format=docker \
+            --location=europe-west3 \
+            --description="Repository for note-api images"
+      
       - name: Tag and Push Image to Artifact Registry
         run: |
           docker tag ghcr.io/${{ github.repository }}/main:latest \
