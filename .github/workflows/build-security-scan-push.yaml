@@ -67,9 +67,8 @@ jobs:
       - name: Create Artifact Registry Repository
         id: create-repo
         run: |
-          gcloud auth configure-docker europe-west3-docker.pkg.dev \
-          gcloud artifacts repositories describe note-api-hs-heilbronn-devsecops-dream-team --location=europe-west3 || \
-          gcloud artifacts repositories create note-api-hs-heilbronn-devsecops-dream-team \
+          gcloud artifacts repositories describe hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team --location=europe-west3 || \
+          gcloud artifacts repositories create hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team \
             --repository-format=docker \
             --location=europe-west3 \
             --description="Repository for note-api images"
