@@ -23,11 +23,4 @@ jobs:
     
     - name: Set up gcloud
       run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-  
-    - name: Deploy to Google Cloud Run
-      uses: google-github-actions/deploy-cloudrun@v0
-      with:
-        service: note-api-hs-heilbronn-devsecops-rksk
-        image: ghcr.io/${{ github.repository }}:latest
-        region: ${{ secrets.GCP_REGION }}
-        env_vars: BACKEND=memory
+
