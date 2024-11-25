@@ -49,3 +49,28 @@ jobs:
       - name: Push the Docker image
         run: |
           docker push ghcr.io/${{ github.repository }}/main:latest
+
+  Deploy to Google Cloud Run:
+    runs-on: ubuntu-latest
+    - name: Authenticate with Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+        service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: 'note-api'
+
+    - name: Deploy to Cloud Run
+      uses: google-github-actions/deploy-cloudrun@v2
+      with:
+        service: 'note-api-hs-heilbronn-devsecops-dream-team'
+        image: 'gcr.io/note-api/main:latest'
+        # region: 'us-central1'
+        env_vars: BACKEND=memory
+
+    - name: 'Use output'
+      run: 'curl "${{ steps.deploy.outputs.url }}"'
