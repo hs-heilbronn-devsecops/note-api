@@ -50,7 +50,7 @@ jobs:
         run: |
           docker push ghcr.io/${{ github.repository }}/main:latest
 
-  Deploy to Google Cloud Run:
+  Deploy-to-Google-Cloud-Run:
     runs-on: ubuntu-latest
     - name: Authenticate with Google Cloud
       id: auth
