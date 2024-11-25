@@ -71,7 +71,7 @@ jobs:
         with:
           service: 'note-api-hs-heilbronn-devsecops-dream-team'
           image: 'gcr.io/note-api/main:latest'
-          # region: 'us-central1'
+          region: 'europe-west3'
           env_vars: BACKEND=memory
 
       - name: 'Use output'
