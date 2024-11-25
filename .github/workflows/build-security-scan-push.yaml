@@ -31,9 +31,7 @@ jobs:
   Build-and-Push-Docker-Image:
     runs-on: ubuntu-latest
     needs: security-scan
-    permissions:
-      id-token: write  # Required for authentication
-      contents: read 
+
     steps:
       - name: Check out the code
         uses: actions/checkout@v4
@@ -61,6 +59,9 @@ jobs:
       id-token: write  # Required for authentication
       contents: read 
     steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
