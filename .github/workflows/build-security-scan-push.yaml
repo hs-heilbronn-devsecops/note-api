@@ -79,7 +79,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api:latest .
+          docker build -t ghcr.io/${{ github.repository }}/main:latest .
 
       - name: Push image to Artifact Registry
         run: |
