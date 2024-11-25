@@ -84,6 +84,8 @@ jobs:
 
       - name: Push image to Artifact Registry
         run: |
+          docker tag europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api/main:latest \
+            europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
           docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
 
       - name: Deploy to Cloud Run
