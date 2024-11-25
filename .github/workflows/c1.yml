@@ -11,6 +11,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+  deploy-cloud-run:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - uses: actions/checkout@v2
@@ -54,3 +59,21 @@ jobs:
     - name: Push Docker image 
       run: docker push ghcr.io/${{ github.repository }}:latest
       
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+        service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+    
+    - name: Set up gcloud
+      run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Deploy to Cloud Run 
+      uses: google-github-actions/deploy-cloudrun@v1 
+      with: 
+        service: note-api-${{ github.repository_owner }} 
+        image: ghcr.io/${{ github.repository_owner }}/note-api:latest 
+        region: us-central1 
+        env_vars: BACKEND=memory
+      
+    
