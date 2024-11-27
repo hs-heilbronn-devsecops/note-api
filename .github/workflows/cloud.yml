@@ -16,10 +16,10 @@ jobs:
 ######################################################################
 
     steps:
-      -name: Checkout repository 
-       uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      -name: Authenticate to Google Cloud (with workload identity federation)
+      - name: Authenticate to Google Cloud (with workload identity federation)
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: '${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
