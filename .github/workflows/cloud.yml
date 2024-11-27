@@ -1,0 +1,50 @@
+name: Deploy Google Cloud Run
+on:
+  push:
+  #workflow_run:
+  #  workflows: ["dockerImage"]
+  #  types:
+  #      - completed
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+############################# CHECK IF NEEDED ########################
+    permissions:  # Korrekte Berechtigungen für den Job
+      contents: read
+      id-token: write
+######################################################################
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log repository details
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+
+      - name: Authenticate to Google Cloud (with workload identity federation)
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos' #'${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
+          service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com' #'${{secrets.SERVICE_ACCOUNT}}'
+          create_credentials_file: true
+          export_environment_variables: true
+          access_token_lifetime: 3600s
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: hs-heilbronn-devsecops
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: note-api #hs-heilbronn-devsecops-mjmteam/note-api
+          image: ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api:latest
+          region: europe-west3 #Frankfurt ?
+          env_vars: BACKEND=memory
