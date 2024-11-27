@@ -49,11 +49,9 @@ jobs:
 
       - name: Push Docker image to Google Artifact Registry
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}"
-          docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker pull ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest
-          docker tag ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
-          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
+          sudo apt-get -y install skopeo
+          skopeo login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
+          skopeo copy docker://ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest docker://europe-west3-docker.pkg.dev/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest 
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
