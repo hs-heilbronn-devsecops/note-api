@@ -5,11 +5,6 @@ on:
   #  workflows: ["dockerImage"]
   #  types:
   #      - completed
-
-permissions:
-  id-token: write
-  contents: read
-  packages: read
   
 jobs:
   deploy:
@@ -40,12 +35,6 @@ jobs:
           export_environment_variables: true
           access_token_lifetime: 3600s
           access_token_scopes: https://www.googleapis.com/auth/cloud-platform
-          #project_id: note-api
-
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: 'hs-heilbronn-devsecops'
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -55,7 +44,7 @@ jobs:
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: hs-heilbronn-devsecops-mjmteam/note-api
+          service: note-api #hs-heilbronn-devsecops-mjmteam/note-api
           image: ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api:latest
           region: europe-west3 #Frankfurt ?
           env_vars: BACKEND=memory
