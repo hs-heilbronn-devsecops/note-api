@@ -49,9 +49,9 @@ jobs:
 
       - name: Push Docker image to Google Artifact Registry
         run: |
-          docker pull ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api:latest
-          docker tag ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api:latest europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api-repo/note-api:latest
-          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api-repo/note-api:latest
+          docker pull ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest
+          docker tag ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
+          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
