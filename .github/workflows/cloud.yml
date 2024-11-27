@@ -40,6 +40,11 @@ jobs:
           access_token_lifetime: 3600s
           access_token_scopes: https://www.googleapis.com/auth/cloud-platform
           #project_id: note-api
+          
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: 'hs-heilbronn-devsecops'
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
