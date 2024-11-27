@@ -41,6 +41,17 @@ jobs:
         with:
           project_id: hs-heilbronn-devsecops
 
+      # 5. Docker für Artifact Registry authentifizieren
+      - name: Authenticate Docker with Google Artifact Registry
+        run: gcloud auth configure-docker europe-west3-docker.pkg.dev
+
+      # 6. Container-Image in Artifact Registry pushen
+      - name: Push Docker image to Google Artifact Registry
+        run: |
+          docker pull ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api:latest
+          docker tag ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api:latest europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api-repo/note-api:latest
+          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api-repo/note-api:latest
+
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
