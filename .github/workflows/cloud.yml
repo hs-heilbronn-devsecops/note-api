@@ -33,6 +33,7 @@ jobs:
       - name: Authenticate to Google Cloud (with workload identity federation)
         uses: google-github-actions/auth@v2
         with:
+          token_format: 'access_token'
           workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos' #'${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
           service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com' #'${{secrets.SERVICE_ACCOUNT}}'
           create_credentials_file: true
@@ -40,7 +41,7 @@ jobs:
           access_token_lifetime: 3600s
           access_token_scopes: https://www.googleapis.com/auth/cloud-platform
           #project_id: note-api
-          
+
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
         with:
