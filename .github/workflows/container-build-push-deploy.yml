@@ -1,8 +1,8 @@
-name: Docker-Registry
+name: Container-Build-Push-Deploy
 
 on:
   workflow_run:
-    workflows: ["Test-and-Analysis"]
+    workflows: ["Codecov-and-Snyk"]
     branches: [main]
     types:
       - completed

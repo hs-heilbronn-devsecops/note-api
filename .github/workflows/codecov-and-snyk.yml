@@ -1,4 +1,4 @@
-name: Test-and-Analysis
+name: Codecov-and-Snyk
 
 on:
   workflow_dispatch:  # Allow manual triggering of the workflow
