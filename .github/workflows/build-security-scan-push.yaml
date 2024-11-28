@@ -80,13 +80,13 @@ jobs:
       
       - name: Build Docker image
         run: |
-          docker build -t europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api/main:latest .
+          docker build -t europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest .
 
       - name: Push image to Artifact Registry
         run: |
           docker tag europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api/main:latest \
             europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
-          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
+          docker push europe-west3-docker.pkg.dev/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
