@@ -69,7 +69,7 @@ jobs:
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: note-api-${{ github.repository_owner }}
-        image: ghcr.io/<your-organization>/note-api:latest
+        image: ghcr.io/${{ github.repository_owner }}/note-api:latest
         region: us-central1
         env_vars: BACKEND=memory
 
