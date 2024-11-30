@@ -53,6 +53,10 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build -t ghcr.io/${{ github.repository }}/main:latest .
+      
+      - name: Push Docker Image
+        run: |
+          docker push ghcr.io/${{ github.repository }}/main:latest 
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
@@ -70,17 +74,22 @@ jobs:
           echo "Setting up Docker..."
           gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
       
+      - name: Build and Push Container
+        run: |-
+          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.PROJECT_ID }}:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.PROJECT_ID }}}:${{ github.sha }}"
 
-      - name: Push image to Artifact Registry
-        run: |
-          docker tag ghcr.io/${{ github.repository }}/main:latest \
-            ${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/main:latest
-          docker push ${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/main:latest
+
+      # - name: Push image to Artifact Registry
+      #   run: |
+      #     docker tag ghcr.io/${{ github.repository }}/main:latest \
+      #       ${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/main:latest
+      #     docker push ${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/main:latest
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: '${{ env.PROJECT_ID }}'
-          image: '${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/main:latest'
+          image: '${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.PROJECT_ID }}:${{ github.sha }}'
           region: ${{ env.GAR_LOCATION }}
           env_vars: BACKEND=memory
