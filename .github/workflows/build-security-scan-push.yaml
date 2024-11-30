@@ -77,6 +77,7 @@ jobs:
           gcloud artifacts repositories create note-api \
             --repository-format=docker \
             --location=europe-west3 \
+            --project=note-api-hs-heilbronn-devsecops-dream-team \
             --description="Repository for note-api"
 
       - name: Push image to Artifact Registry
