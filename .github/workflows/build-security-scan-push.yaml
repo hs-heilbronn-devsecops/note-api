@@ -28,10 +28,12 @@ jobs:
         with:
           sarif_file: ${{ github.workspace }}/snyk.sarif 
 
-  Build-and-Push-Docker-Image:
+  Build-and-Push-Docker-Image-To-GCR:
     runs-on: ubuntu-latest
     needs: security-scan
-
+    permissions:
+      id-token: write  # Required for authentication
+      contents: read 
     steps:
       - name: Check out the code
         uses: actions/checkout@v4
@@ -47,18 +49,9 @@ jobs:
         run: |
           docker build -t ghcr.io/${{ github.repository }}/main:latest .
 
-      - name: Push the Docker image
-        run: |
-          docker push ghcr.io/${{ github.repository }}/main:latest
-      
-          
-  Deploy-to-Google-Cloud-Run:
-    runs-on: ubuntu-latest
-    needs: Build-and-Push-Docker-Image
-    permissions:
-      id-token: write  # Required for authentication
-      contents: read 
-    steps:
+      # - name: Push the Docker image
+      #   run: |
+      #     docker push ghcr.io/${{ github.repository }}/main:latest
       - name: Check out the code
         uses: actions/checkout@v2
 
@@ -71,30 +64,79 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: 'note-api'
+          project_id: 'note-api-hs-heilbronn-devsecops-dream-team'
 
       - name: Set up Docker
         run: |
           echo "Setting up Docker..."
           gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
       
-      - name: Build Docker image
+      - name: Setup Repository 
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/main:latest .
+          echo "f the repository doesn't exist, create it"
+          gcloud artifacts repositories create note-api-hs-heilbronn-devsecops-dream-team/note-api \
+            --repository-format=docker \
+            --location=europe-west3 \
+            --description="Repository for note-api"
 
       - name: Push image to Artifact Registry
         run: |
           docker tag ghcr.io/${{ github.repository }}/main:latest \
             europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
-          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
+          docker push europe-west3-docker.pkg.dev/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: 'note-api-hs-heilbronn-devsecops-dream-team'
-          image: 'europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest'
+          image: 'europe-west3-docker.pkg.dev/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest'
           region: 'europe-west3'
           env_vars: BACKEND=memory
+      
+          
+  # Deploy-to-Google-Cloud-Run:
+  #   runs-on: ubuntu-latest
+  #   needs: Build-and-Push-Docker-Image
+  #   permissions:
+  #     id-token: write  # Required for authentication
+  #     contents: read 
+  #   steps:
+  #     - name: Check out the code
+  #       uses: actions/checkout@v2
+
+  #     - name: Authenticate with Google Cloud
+  #       uses: google-github-actions/auth@v2
+  #       with:
+  #         workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+  #         service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+
+  #     - name: Set up Google Cloud SDK
+  #       uses: google-github-actions/setup-gcloud@v2
+  #       with:
+  #         project_id: 'note-api'
+
+  #     - name: Set up Docker
+  #       run: |
+  #         echo "Setting up Docker..."
+  #         gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
+      
+  #     - name: Build Docker image
+  #       run: |
+  #         docker build -t ghcr.io/${{ github.repository }}/main:latest .
+
+  #     - name: Push image to Artifact Registry
+  #       run: |
+  #         docker tag ghcr.io/${{ github.repository }}/main:latest \
+  #           europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
+  #         docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest
+
+  #     - name: Deploy to Cloud Run
+  #       uses: google-github-actions/deploy-cloudrun@v2
+  #       with:
+  #         service: 'note-api-hs-heilbronn-devsecops-dream-team'
+  #         image: 'europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/note-api-hs-heilbronn-devsecops-dream-team/note-api/main:latest'
+  #         region: 'europe-west3'
+  #         env_vars: BACKEND=memory
 
       # - name: 'Use output'
       #   run: 'curl "${{ steps.deploy.outputs.url }}"'
