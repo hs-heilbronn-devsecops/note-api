@@ -73,8 +73,8 @@ jobs:
       
       - name: Setup Repository 
         run: |
-          echo "f the repository doesn't exist, create it"
-          gcloud artifacts repositories create note-api-hs-heilbronn-devsecops-dream-team/note-api \
+          echo "if the repository doesn't exist, create it"
+          gcloud artifacts repositories create note-api \
             --repository-format=docker \
             --location=europe-west3 \
             --description="Repository for note-api"
