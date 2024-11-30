@@ -50,13 +50,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.TOKEN }}
 
-      - name: Build the Docker image
-        run: |
-          docker build -t ghcr.io/${{ github.repository }}/main:latest .
+      # - name: Build the Docker image
+      #   run: |
+      #     docker build -t ghcr.io/${{ github.repository }}/main:latest .
       
-      - name: Push Docker Image
-        run: |
-          docker push ghcr.io/${{ github.repository }}/main:latest 
+      # - name: Push Docker Image
+      #   run: |
+      #     docker push ghcr.io/${{ github.repository }}/main:latest 
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
