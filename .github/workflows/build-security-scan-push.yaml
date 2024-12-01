@@ -34,11 +34,15 @@ jobs:
           sarif_file: ${{ github.workspace }}/snyk.sarif 
 
   Build-and-Push-Docker-Image-To-GCR:
+
     runs-on: ubuntu-latest
+
     needs: security-scan
+    # Add 'id-token' with the intended permissions for workload identity federation
     permissions:
       id-token: write  # Required for authentication
       contents: read 
+
     steps:
       - name: Check out the code
         uses: actions/checkout@v4
