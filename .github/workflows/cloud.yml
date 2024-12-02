@@ -79,6 +79,6 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: note-api #hs-heilbronn-devsecops-mjmteam/note-api
-          image: ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api:latest
+          image: europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
           region: europe-west3 #Frankfurt ?
           env_vars: BACKEND=memory
