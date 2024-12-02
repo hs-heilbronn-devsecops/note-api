@@ -44,5 +44,5 @@ jobs:
           #platforms: linux/amd64, linux/arm64
           provenance: false #Provenance information not needed
           push: true
-          tags: ghcr.io/${{ github.repository }}/note-api:{{ github.event.workflow_run.head_commit.id }}  #Tag image with hash value of triggered branch
+          tags: ghcr.io/${{ github.repository }}/note-api:${{ github.sha }}  #Tag image with hash value of triggered branch
       - run: echo "Build and push completed to GitHub Container Registry"
