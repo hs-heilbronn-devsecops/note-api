@@ -58,12 +58,12 @@ jobs:
         run: |
           docker pull ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:${{ github.sha }}
           docker tag ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:${{ github.sha }} europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:${{ github.sha }}
-          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:{{ github.sha }}
+          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:${{ github.sha }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: hs-heilbronn-devsecops-mjmteam #displayed name of service
-          image: europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:{{ github.sha }}
+          image: europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:${{ github.sha }}
           region: europe-west3 #Frankfurt 
           env_vars: BACKEND=memory
