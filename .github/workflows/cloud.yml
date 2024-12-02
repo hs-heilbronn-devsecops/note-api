@@ -4,7 +4,8 @@ on:
     workflows: ["dockerImage"]
     types:
         - completed
-  
+
+if: github.ref_name == 'main'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,7 +14,6 @@ jobs:
       contents: read
       id-token: write
       packages: read
-
     steps:
       #- name: Checkout repository
       #  uses: actions/checkout@v4
@@ -27,14 +27,16 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          token_format: 'access_token'
+          token_format: 'access_token' #to generate OAuth2.0 token
           workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos' #'${{secrets.WORKLOAD_IDENTITY_PROVIDER}}'
           service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com' #'${{secrets.SERVICE_ACCOUNT}}'
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: hs-heilbronn-devsecops
+      #- name: Set up Google Cloud SDK
+      #  uses: google-github-actions/setup-gcloud@v2
+      #  with:
+      #    project_id: hs-heilbronn-devsecops
+
+      # Login to GHCR and GAR so docker commands can pull and push later
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -47,19 +49,20 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.access_token }}'
+          password: '${{ steps.auth.outputs.access_token }}' # reuse access token from google cloud auth
           registry: europe-west3-docker.pkg.dev 
 
+      # pull latest main docker image and push to GAR
       - name: Push Docker image to Google Artifact Registry
         run: |
-          docker pull ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest
-          docker tag ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
-          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
+          docker pull ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:{{ github.event.workflow_run.head_sha }}
+          docker tag ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:{{ github.event.workflow_run.head_sha }} europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:{{ github.event.workflow_run.head_sha }}
+          docker push europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:{{ github.event.workflow_run.head_sha }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: hs-heilbronn-devsecops-mjmteam
-          image: europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
+          service: hs-heilbronn-devsecops-mjmteam #displayed name of service
+          image: europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:{{ github.event.workflow_run.head_sha }}
           region: europe-west3 #Frankfurt 
           env_vars: BACKEND=memory
