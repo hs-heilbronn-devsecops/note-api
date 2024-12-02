@@ -1,21 +1,18 @@
 name: Deploy Google Cloud Run
 on:
-  push:
-  #workflow_run:
-  #  workflows: ["dockerImage"]
-  #  types:
-  #      - completed
+  workflow_run:
+    workflows: ["dockerImage"]
+    types:
+        - completed
   
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-############################# CHECK IF NEEDED ########################
     permissions:  # Korrekte Berechtigungen für den Job
       contents: read
       id-token: write
       packages: read
-######################################################################
 
     steps:
       - name: Checkout repository
@@ -51,23 +48,7 @@ jobs:
         with:
           username: 'oauth2accesstoken'
           password: '${{ steps.auth.outputs.access_token }}'
-          registry: europe-west3-docker.pkg.dev
-
-      
-
-      #- name: Authenticate Docker with Google Artifact Registry
-      #  run: |
-      #    gcloud auth configure-docker europe-west3-docker.pkg.dev
-
-      #- name: Push Docker image to Google Artifact Registry
-      #  run: |
-      #    sudo apt-get -y install skopeo
-      #    skopeo login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
-      #    skopeo login --authfile GOOGLE_GHA_CREDS_PATH europe-west3-docker.pkg.dev
-      #    skopeo copy \
-      #      --debug \
-      #      docker://ghcr.io/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest \
-      #      docker://europe-west3-docker.pkg.dev/hs-heilbronn-devsecops-mjmteam/note-api/note-api:latest 
+          registry: europe-west3-docker.pkg.dev 
 
       - name: Push Docker image to Google Artifact Registry
         run: |
@@ -80,5 +61,5 @@ jobs:
         with:
           service: hs-heilbronn-devsecops-mjmteam
           image: europe-west3-docker.pkg.dev/hs-heilbronn-devsecops/note-api/note-api:latest
-          region: europe-west3 #Frankfurt ?
+          region: europe-west3 #Frankfurt 
           env_vars: BACKEND=memory
