@@ -48,7 +48,9 @@ jobs:
       
 
       - name: Authenticate Docker with Google Artifact Registry
-        run: gcloud auth configure-docker europe-west3-docker.pkg.dev
+        run: |
+          gloud init
+          gcloud auth configure-docker europe-west3-docker.pkg.dev
 
       - name: Push Docker image to Google Artifact Registry
         run: |
