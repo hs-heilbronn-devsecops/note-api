@@ -22,7 +22,7 @@ jobs:
     - name: Set up Python environment
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12.7' # Using the latest agreed-upon version
+        python-version: '3.12.7' # Ensures consistency with development
 
     - name: Install dependencies
       run: |
@@ -69,5 +69,5 @@ jobs:
         region: europe-west3
         env_vars: BACKEND=memory
 
-    - name: Use output
-      run: curl "${{ steps.deploy.outputs.url }}"
+    - name: Validate deployment
+      run: curl "${{ steps.deploy.outputs.url }}" | grep "Expected output"
