@@ -55,19 +55,21 @@ jobs:
     - name: Push Docker image to GitHub Container Registry
       run: docker push ghcr.io/${{ github.repository }}:latest
 
-    - name: Authenticate with Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
-        service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+    - name: Authenticate with Service Account Key
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+      run: |
+        echo "${{ secrets.GCP_SA_KEY }}" > "${HOME}/gcp-key.json"
+        gcloud auth activate-service-account --key-file="${HOME}/gcp-key.json"
+        gcloud config set project <your-project-id>
 
-    - id: deploy
-      uses: google-github-actions/deploy-cloudrun@v2
-      with:
-        service: note-api-${{ github.repository_owner }}
-        source: "."
-        region: europe-west3
-        env_vars: BACKEND=memory
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy note-api-${{ github.repository_owner }} \
+          --image ghcr.io/${{ github.repository }}:latest \
+          --region europe-west3 \
+          --platform managed \
+          --update-env-vars BACKEND=memory
 
     - name: Validate deployment
-      run: curl "${{ steps.deploy.outputs.url }}" | grep "Expected output"
+      run: curl "$(gcloud run services describe note-api-${{ github.repository_owner }} --region europe-west3 --format 'value(status.url)')"
