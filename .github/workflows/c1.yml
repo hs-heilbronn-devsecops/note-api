@@ -70,7 +70,7 @@ jobs:
       with:
         service: note-api-${{ github.repository_owner }}
         image: ghcr.io/${{ github.repository_owner }}/note-api:latest
-        region: us-central1
+        region: europe-west3
         env_vars: BACKEND=memory
 
     - name: Use output
