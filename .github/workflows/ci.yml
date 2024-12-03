@@ -1,5 +1,3 @@
-# CI Pipeline for automated testing, security scan, and containerization
-
 name: CI Pipeline
 
 on:
@@ -9,8 +7,11 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  deploy-cloud-run:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - name: Checkout code
@@ -21,7 +22,7 @@ jobs:
     - name: Set up Python environment
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12.1'
+        python-version: '3.12.7' # Using the latest agreed-upon version
 
     - name: Install dependencies
       run: |
@@ -47,9 +48,26 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.TOKEN }}
-    
+
     - name: Build Docker image
       run: docker build -t ghcr.io/${{ github.repository }}:latest .
 
     - name: Push Docker image to GitHub Container Registry
       run: docker push ghcr.io/${{ github.repository }}:latest
+
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+        service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+
+    - id: deploy
+      uses: google-github-actions/deploy-cloudrun@v2
+      with:
+        service: note-api-${{ github.repository_owner }}
+        source: "."
+        region: europe-west3
+        env_vars: BACKEND=memory
+
+    - name: Use output
+      run: curl "${{ steps.deploy.outputs.url }}"
