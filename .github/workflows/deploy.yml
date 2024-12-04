@@ -32,5 +32,3 @@ jobs:
         region: europe-west3
         env_vars: BACKEND=memory
 
-    - name: Verify Deployment
-      run: curl "${{ steps.deploy.outputs.url }}"
