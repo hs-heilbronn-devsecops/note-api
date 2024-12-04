@@ -1,4 +1,4 @@
-name: Deployment Workflow
+name: Deploy Pipeline
 
 on:
   push:
@@ -13,6 +13,11 @@ jobs:
       contents: read
 
     steps:
+    - name: Check out the code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
     - name: Authenticate with Google Cloud
       uses: google-github-actions/auth@v1
       with:
@@ -26,3 +31,6 @@ jobs:
         source: "."
         region: europe-west3
         env_vars: BACKEND=memory
+
+    - name: Verify Deployment
+      run: curl "${{ steps.deploy.outputs.url }}"

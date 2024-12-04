@@ -1,4 +1,4 @@
-name: Test Workflow
+name: Test Pipeline
 
 on:
   pull_request:
@@ -13,27 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - name: Check out the code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v2
       with:
-        python-version: '3.12'
+        python-version: 3.12.1
 
     - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install pytest pytest-cov
+      run: pip install -r requirements.txt
+
+    - name: Install development dependencies
+      run: pip install -r requirements-dev.txt
 
     - name: Run tests with coverage
-      run: |
-        pytest --cov=note_api --cov-report=term --cov-report=xml
+      run: pytest --cov=note_api -n auto
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage.xml
-        flags: unittests
-        name: codecov-coverage-report
+
+    - name: Snyk Security Scan
+      uses: snyk/actions/python@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
