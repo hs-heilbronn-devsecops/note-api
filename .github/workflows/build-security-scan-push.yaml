@@ -73,16 +73,6 @@ jobs:
         with:
           project_id: ${{ env.PROJECT_ID }}
 
-      
-
-      - name: Create Artifact Repository
-        run: |
-          gcloud artifacts repositories create ${{ env.REPOSITORY }}-${{ env.PROJECT_ID }} \
-          --repository-format=docker \
-          --location=${{ env.GAR_LOCATION }} \
-          --description="Repository for ${{ env.REPOSITORY }}"
-
-
       - name: Set up Docker
         run: |
           echo "Setting up Docker..."
