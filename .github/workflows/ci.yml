@@ -1,0 +1,54 @@
+name: CI pipeline
+
+on:
+  workflow_run:
+    workflows:
+      - CI Pipeline  # Triggers after ci.yaml completes
+    types:
+      - completed
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
+jobs:
+  build_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+          service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+
+      # Step 3: Set up Docker authentication for Google Artifact Registry
+      - name: Authenticate Docker with Google Artifact Registry
+        run: |
+          gcloud auth configure-docker europe-west3-docker.pkg.dev
+
+      # Step 4: Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/note-api/note-api:${{ github.sha }} .
+
+      # Step 5: Push Docker image to Google Artifact Registry
+      - name: Push Docker image to Google Artifact Registry
+        run: |
+          docker push europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/note-api/note-api:${{ github.sha }}
+
+      # Step 6: Deploy to Google Cloud Run
+      - name: Deploy to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: 'note-api-hs-heilbronn-devsecops-teamp123'
+          image: 'europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/note-api/note-api:${{ github.sha }}'
+          region: 'europe-west3'
+          env_vars: BACKEND=memory
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
