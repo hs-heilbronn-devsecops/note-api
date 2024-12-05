@@ -120,7 +120,7 @@ jobs:
           service: note-api-teamrocket
           image: ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:latest
           #region: us-central1  # Replace with your desired region
-          platform: managed
+          #platform: managed
           env_vars: BACKEND=memory
           flags: >
             --set-secrets GHCR_AUTH_TOKEN=GHCR_AUTH_TOKEN:latest
