@@ -98,6 +98,9 @@ jobs:
   deploy_to_cloudrun:
     runs-on: ubuntu-latest
     needs: container
+    permissions:
+      id-token: write
+      contents: read  # Required for accessing the repository
     steps:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
@@ -116,6 +119,7 @@ jobs:
         with:
           service: note-api-teamrocket
           image: ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:latest
-          region: eu-central1
+          region: eu-central1  # Specify your region, e.g., us-central1
           env_vars: BACKEND=memory
+
 
