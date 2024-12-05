@@ -28,7 +28,7 @@ jobs:
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: note-api-${{ github.repository_owner }}
-        source: "."
+        image: 'ghcr.io/${{ github.repository }}:${{ github.sha }}'
         region: europe-west3
         env_vars: BACKEND=memory
 
