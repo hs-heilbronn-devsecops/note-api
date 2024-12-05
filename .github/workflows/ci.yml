@@ -117,8 +117,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: note-api-teamrocket
-          image: docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/note-api:lates
+          image: docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/note-api:latest
           #region: us-central1  # Replace with your desired region
           #platform: managed
           env_vars: BACKEND=memory
-          
