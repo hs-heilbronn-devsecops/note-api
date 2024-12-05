@@ -13,17 +13,27 @@ jobs:
       contents: read
 
     steps:
+    # Step 1: Check out the code
     - name: Check out the code
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
 
+    # Step 2: Authenticate with Google Cloud
     - name: Authenticate with Google Cloud
       uses: google-github-actions/auth@v1
       with:
         workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
         service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
 
+    # Step 3: Debug Authentication
+    - name: Debug Authentication
+      run: |
+        echo "Verifying authentication..."
+        gcloud auth list
+        gcloud config list
+
+    # Step 4: Deploy to Cloud Run
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v2
       with:
@@ -32,5 +42,6 @@ jobs:
         region: europe-west3
         env_vars: BACKEND=memory
 
-    - name: Use output
+    # Step 5: Verify Deployment
+    - name: Use deployment output
       run: curl "${{ steps.deploy.outputs.url }}"
