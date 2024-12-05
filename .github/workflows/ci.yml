@@ -1,73 +1,54 @@
-name: CI Pipeline
+name: CI pipeline
 
 on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
+  workflow_run:
+    workflows:
+      - CI Pipeline  # Triggers after ci.yaml completes
+    types:
+      - completed
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write
 
 jobs:
-  deploy-cloud-run:
+  build_push:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python environment
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12.7' # Ensures consistency with development
+      # Step 2: Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+          service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+      # Step 3: Set up Docker authentication for Google Artifact Registry
+      - name: Authenticate Docker with Google Artifact Registry
+        run: |
+          gcloud auth configure-docker europe-west3-docker.pkg.dev
 
-    - name: Run tests with coverage
-      run: pytest --cov=name -n auto
+      # Step 4: Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/note-api/note-api:${{ github.sha }} .
 
-    - name: Upload coverage report to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+      # Step 5: Push Docker image to Google Artifact Registry
+      - name: Push Docker image to Google Artifact Registry
+        run: |
+          docker push europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/note-api/note-api:${{ github.sha }}
 
-    - name: Snyk Security Scan
-      uses: snyk/actions/python@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.TOKEN }}
-
-    - name: Build Docker image
-      run: docker build -t ghcr.io/${{ github.repository }}:latest .
-
-    - name: Push Docker image to GitHub Container Registry
-      run: docker push ghcr.io/${{ github.repository }}:latest
-
-    - name: Authenticate with Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
-        service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
-
-    - id: deploy
-      uses: google-github-actions/deploy-cloudrun@v2
-      with:
-        service: note-api-${{ github.repository_owner }}
-        source: "."
-        region: europe-west3
-        env_vars: BACKEND=memory
-
-    - name: Validate deployment
-      run: curl "${{ steps.deploy.outputs.url }}" | grep "Expected output"
+      # Step 6: Deploy to Google Cloud Run
+      - name: Deploy to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: 'note-api-hs-heilbronn-devsecops-teamp123'
+          image: 'europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/note-api/note-api:${{ github.sha }}'
+          region: 'europe-west3'
+          env_vars: BACKEND=memory
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
