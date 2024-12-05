@@ -116,6 +116,6 @@ jobs:
         with:
           service: note-api-teamrocket
           image: ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:latest
-          region: ${{ secrets.GCP_REGION }}  # Specify your region, e.g., us-central1
+          region: eu-central1
           env_vars: BACKEND=memory
 
