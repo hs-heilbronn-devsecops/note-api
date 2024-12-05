@@ -24,12 +24,6 @@ jobs:
         workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
         service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
 
-    - name: Debug Authentication
-      run: |
-        echo "Verifying authentication..."
-        gcloud auth list
-        gcloud config list
-
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v2
       with:
