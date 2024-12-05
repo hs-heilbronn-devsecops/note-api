@@ -130,27 +130,26 @@ jobs:
   steps:
     
 name: Authenticate to Google Cloud
-    uses: google-github-actions/auth@v1
-    with:
-      workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
-      service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+  uses: google-github-actions/auth@v1
+  with:
+    workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+    service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
 
     
 name: Set up Google Cloud SDK
-    uses: google-github-actions/setup-gcloud@v1
-    with:
-      project_id: ${{ secrets.GCP_PROJECT_ID }}
-      export_default_credentials: true
+  uses: google-github-actions/setup-gcloud@v1
+  with:
+    project_id: ${{ secrets.GCP_PROJECT_ID }}
+    export_default_credentials: true
 
     
 name: Deploy to Cloud Run
-    uses: google-github-actions/deploy-cloudrun@v1
-    with:
-      service: note-api-teamrocket
-      image: ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:latest
-      region: us-central1  # Replace with your desired region
-      platform: managed
-      env_vars: BACKEND=memory
-      flags: >--set-secrets GHCR_AUTH_TOKEN=GHCR_AUTH_TOKEN:latest
+  uses: google-github-actions/deploy-cloudrun@v1
+  with:
+    service: note-api-teamrocket
+    image: ghcr.io/hs-heilbronn-devsecops-teamrocket/note-api/myapp:latest
+    platform: managed
+    env_vars: BACKEND=memory
+    flags: >--set-secrets GHCR_AUTH_TOKEN=GHCR_AUTH_TOKEN:latest
 
 
