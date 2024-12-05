@@ -1,77 +1,47 @@
-name: CI Pipeline
+name: Deploy Pipeline
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
 
 jobs:
-  deploy-cloud-run:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
-  # build:
-  #   runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    # Step 1: Check out the code
+    - name: Check out the code
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.12.1
-
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-
-    - name: Install development dependencies
-      run: pip install -r requirements-dev.txt
-
-    - name: Run pytest with coverage
-      run: pytest --cov=name -n auto
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-    - name: Snyk Security Scan
-      uses: snyk/actions/python@master
-      env:
-       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-    
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.TOKEN }}
-    
-    - name: Build Docker image 
-      run: docker build . -t ghcr.io/${{ github.repository }}:latest 
-
-    - name: Push Docker image 
-      run: docker push ghcr.io/${{ github.repository }}:latest
-    
+    # Step 2: Authenticate with Google Cloud
     - name: Authenticate with Google Cloud
       uses: google-github-actions/auth@v1
       with:
         workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
         service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
-    
-    - id: deploy
+
+    # Step 3: Debug Authentication
+    - name: Debug Authentication
+      run: |
+        echo "Verifying authentication..."
+        gcloud auth list
+        gcloud config list
+
+    # Step 4: Deploy to Cloud Run
+    - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: note-api-${{ github.repository_owner }}
-        source: .
+        source: "."
         region: europe-west3
         env_vars: BACKEND=memory
 
-    - name: Use output
+    # Step 5: Verify Deployment
+    - name: Use deployment output
       run: curl "${{ steps.deploy.outputs.url }}"
