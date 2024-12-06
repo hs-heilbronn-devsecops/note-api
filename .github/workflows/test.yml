@@ -11,10 +11,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
-    - name: Check out the code
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
       with:
         fetch-depth: 0
 
@@ -29,8 +30,8 @@ jobs:
     - name: Install development dependencies
       run: pip install -r requirements-dev.txt
 
-    - name: Run tests with coverage
-      run: pytest --cov=note_api -n auto
+    - name: Run pytest with coverage
+      run: pytest --cov=name -n auto
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
