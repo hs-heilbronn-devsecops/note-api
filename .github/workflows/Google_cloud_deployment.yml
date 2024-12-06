@@ -1,0 +1,34 @@
+name: Deployment on cloud Run
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-cloud-run:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
+        service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
+    
+    - id: deploy
+      uses: google-github-actions/deploy-cloudrun@v2
+      with:
+        service: note-api-${{ github.repository_owner }}
+        source: "."
+        region: europe-west3
+        env_vars: BACKEND=memory
+
+    - name: Use output
+      run: curl "${{ steps.deploy.outputs.url }}" 
