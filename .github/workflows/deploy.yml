@@ -13,8 +13,7 @@ jobs:
       contents: read
 
     steps:
-    - name: Check out the code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v2
       with:
         fetch-depth: 0
 
@@ -24,13 +23,13 @@ jobs:
         workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
         service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
 
-    - name: Deploy to Cloud Run
+    - id: deploy
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: note-api-${{ github.repository_owner }}
-        image: ghcr.io/${{ github.repository }}:latest
+        source: "."
         region: europe-west3
         env_vars: BACKEND=memory
 
-    - name: Output Deployment URL
-      run: echo "Deployed to Cloud Run at ${{ steps.deploy.outputs.url }}"
+    - name: Use output
+      run: curl "${{ steps.deploy.outputs.url }}"
