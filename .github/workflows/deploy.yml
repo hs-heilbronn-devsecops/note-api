@@ -28,7 +28,9 @@ jobs:
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: note-api-${{ github.repository_owner }}
-        source: "."
+        image: ghcr.io/${{ github.repository }}:latest
         region: europe-west3
         env_vars: BACKEND=memory
-        verbosity: debug 
+
+    - name: Output Deployment URL
+      run: echo "Deployed to Cloud Run at ${{ steps.deploy.outputs.url }}"
