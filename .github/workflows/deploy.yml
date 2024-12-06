@@ -25,12 +25,10 @@ jobs:
         service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
 
     - name: Deploy to Cloud Run
-      uses: google-github-actions/deploy-cloudrun@v1
+      uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: note-api-${{ github.repository_owner }}
         source: "."
         region: europe-west3
         env_vars: BACKEND=memory
-
-    - name: Use deployment output
-      run: curl "${{ steps.deploy.outputs.url }}"
+        verbosity: debug 
