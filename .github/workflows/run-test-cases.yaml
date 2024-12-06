@@ -1,0 +1,35 @@
+name: Run Test Cases via Pytest
+run-name: ${{ github.actor }} is testing out GitHub Actions
+# Controls when the action will run
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+# Jobs that will run in the workflow
+jobs:
+  build:  
+    runs-on: ubuntu-latest  
+    strategy:  
+      matrix:  
+        python-version: ["3.12"]
+    steps:
+      - run: echo "Running unit tests via Pytest"
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install Python ${{ matrix.python-version }}  
+        uses: actions/setup-python@v4  
+        with:  
+          python-version: ${{ matrix.python-version }} 
+      - name: Install dependencies  
+        run: |  
+            python3 -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install -r requirements-dev.txt
+      - name: Test with pytest and coverage on branch ${{ github.ref }}
+        run: |
+          pytest tests
+          pytest --cov=note_api -n auto
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - run: echo "Unit tests executed with status -> ${{ job.status }}."
