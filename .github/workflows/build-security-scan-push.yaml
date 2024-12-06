@@ -1,51 +1,67 @@
 name: Build, Scan, and Push Docker Image
+# Name of the workflow for easy identification in GitHub Actions
 
 on:
   push:
     branches: [main]
+    # Trigger this workflow when code is pushed to the 'main' branch
 
 env:
-  PROJECT_ID: note-api-hs-heilbronn-devsecops-dream-team # TODO: update Google Cloud project id
-  GAR_LOCATION: europe-west3 # TODO: update Artifact Registry location
-  REPOSITORY: note-api # TODO: update Artifact Registry repository name
+  PROJECT_ID: note-api-hs-heilbronn-devsecops-dream-team
+  # Google Cloud project ID (updated with project-specific value)
+  GAR_LOCATION: europe-west3
+  # Region for the Google Artifact Registry (update as needed)
+  REPOSITORY: note-api
+  # Name of the Artifact Registry repository where the Docker image will be stored
 
 jobs:
   security-scan:
     runs-on: ubuntu-latest
+    # This job runs the security scan on the latest Ubuntu environment
+
     steps:
       - name: Check out the code
         uses: actions/checkout@v2
+        # Step to pull the repository code into the GitHub Actions runner
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
+          # Sets up Python 3.x, required for running Snyk security scans
 
       - name: Run Snyk Security Scan
         uses: snyk/actions/python@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          # Runs a Snyk security scan using a token stored in GitHub Secrets
         with:
           args: --all-projects --sarif-file-output=snyk.sarif
-          
+          # Scans all projects and generates a SARIF file for the results
+
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: ${{ github.workspace }}/snyk.sarif 
+          sarif_file: ${{ github.workspace }}/snyk.sarif
+          # Uploads the SARIF file to GitHub to display security scan results
 
   Build-and-Push-Docker-Image-To-GCR:
-
     runs-on: ubuntu-latest
+    # Job to build and push the Docker image to Google Cloud Registry
 
     needs: security-scan
-    # Add 'id-token' with the intended permissions for workload identity federation
+    # Ensures this job only runs after the `security-scan` job completes successfully
+
     permissions:
-      id-token: write  # Required for authentication
-      contents: read 
+      id-token: write
+      # Required for Workload Identity Federation to authenticate with Google Cloud
+      contents: read
+      # Grants read access to repository contents
 
     steps:
       - name: Check out the code
         uses: actions/checkout@v4
+        # Pulls the repository code for building the Docker image
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -53,42 +69,49 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.TOKEN }}
+          # Logs into GitHub Container Registry using credentials stored in secrets
 
       # - name: Build the Docker image
       #   run: |
       #     docker build -t ghcr.io/${{ github.repository }}/main:latest .
-      
+      # Optional step to build the Docker image locally for GitHub Container Registry
+
       # - name: Push Docker Image
       #   run: |
       #     docker push ghcr.io/${{ github.repository }}/main:latest 
+      # Optional step to push the built image to GitHub Container Registry
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: '${{ vars.WIF_PROVIDER }}'
           service_account: '${{ vars.WIF_SERVICE_ACCOUNT }}'
+          # Authenticates with Google Cloud using Workload Identity Federation
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ env.PROJECT_ID }}
+          # Installs and configures the Google Cloud SDK for the specified project
 
       - name: Set up Docker
         run: |
           echo "Setting up Docker..."
           gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
-      
+          # Configures Docker to authenticate with Google Artifact Registry
+
       - name: Build and Push Container
-        run: |-
+        run: |- 
           docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}:${{ github.sha }}"
-
+          # Builds a Docker image and pushes it to Google Artifact Registry with a unique tag
 
       # - name: Push image to Artifact Registry
       #   run: |
       #     docker tag ghcr.io/${{ github.repository }}/main:latest \
       #       ${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/main:latest
       #     docker push ${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/main:latest
+      # Optional step to retag and push the Docker image
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
@@ -97,3 +120,4 @@ jobs:
           image: '${{ env.GAR_LOCATION }}-docker.pkg.dev/hs-heilbronn-devsecops/cloud-run-source-deploy/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}:${{ github.sha }}'
           region: ${{ env.GAR_LOCATION }}
           env_vars: BACKEND=memory
+          # Deploys the container to Google Cloud Run with the specified configuration
