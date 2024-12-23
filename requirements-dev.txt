@@ -7,4 +7,5 @@ pylint
 pytest-cov
 pytest-xdist
 redis
+google-cloud-storage
 pytest==7.4.3
