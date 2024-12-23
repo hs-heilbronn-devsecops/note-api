@@ -3,6 +3,10 @@ fastapi
 google-cloud-storage
 redis
 uvicorn[standard]
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-gcp-trace
+opentelemetry-instrumentation-fastapi
 # opentelemetry-api==0.17b0
 # opentelemetry-sdk==0.17b0
 # opentelemetry-exporter-google-cloud==0.18b1

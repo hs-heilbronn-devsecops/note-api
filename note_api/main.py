@@ -9,34 +9,28 @@ from starlette.responses import RedirectResponse
 from .backends import Backend, RedisBackend, MemoryBackend, GCSBackend
 from .model import Note, CreateNoteRequest
 
-# from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-# from opentelemetry.instrumentation.requests import RequestsInstrumentor
-# from opentelemetry.sdk.trace import TracerProvider
-# from opentelemetry.sdk.trace.export import BatchSpanProcessor
-# from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
-
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.gcp_trace import GCPTraceExporter
 
 app = FastAPI()
 
 my_backend: Optional[Backend] = None
 
 
-# # Configure OpenTelemetry tracing
-# provider = TracerProvider()
-# cloud_trace_exporter = CloudTraceSpanExporter()
+# Setup OpenTelemetry Tracing
+trace.set_tracer_provider(TracerProvider())
+tracer_provider = trace.get_tracer_provider()
 
+# Configure GCP Trace Exporter
+gcp_exporter = GCPTraceExporter()
+span_processor = BatchSpanProcessor(gcp_exporter)
+tracer_provider.add_span_processor(span_processor)
 
-# # Use BatchSpanProcessor for better performance
-# span_processor = BatchSpanProcessor(cloud_trace_exporter)
-# provider.add_span_processor(span_processor)
-
-# # Set the global tracer provider
-# from opentelemetry import trace
-# trace.set_tracer_provider(provider)
-
-# # Instrument FastAPI app and requests library
-# FastAPIInstrumentor.instrument_app(app)
-# RequestsInstrumentor().instrument()
+# Instrument the FastAPI app
+FastAPIInstrumentor.instrument_app(app)
 
 
 
@@ -90,10 +84,10 @@ def create_note(request: CreateNoteRequest,
     return note_id
 
 
-# @app.get("/custom-span")
-# async def custom_span_example():
-#     tracer = trace.get_tracer(__name__)
-#     with tracer.start_as_current_span("custom-span-operation"):
-#         # Simulate some processing
-#         result = {"message": "Custom span added!"}
-#         return result
+@app.get("/custom-span")
+async def custom_span():
+    tracer = trace.get_tracer(__name__)
+    with tracer.start_as_current_span("custom-operation"):
+        # Simulated operation
+        result = {"message": "Custom span in action!"}
+        return result
