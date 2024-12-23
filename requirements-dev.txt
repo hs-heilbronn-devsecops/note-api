@@ -8,4 +8,6 @@ pytest-cov
 pytest-xdist
 redis
 google-cloud-storage
+opentelemetry-api
+opentelemetry-sdk
 pytest==7.4.3
