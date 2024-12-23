@@ -10,4 +10,6 @@ redis
 google-cloud-storage
 opentelemetry-api
 opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-requests
 pytest==7.4.3
